@@ -1,0 +1,29 @@
+{
+  "name": "bridges-badge-api",
+  "version": "0.0.1",
+  "description": "All the badge logic for the Wise project",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wise-Badges/badge-api.git"
+  },
+  "keywords": [
+    "open-badge",
+    "badges",
+    "typescript",
+    "api"
+  ],
+  "author": "Wise team <wise@osoc.be>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wise-Badges/badge-api/issues"
+  },
+  "homepage": "https://github.com/Wise-Badges/badge-api#readme",
+  "devDependencies": {
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
+  }
+}
