@@ -25,8 +25,12 @@
   },
   "homepage": "https://github.com/Wise-Badges/badge-api#readme",
   "devDependencies": {
+    "@types/express": "^4.17.7",
     "nodemon": "^2.0.4",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.6"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
