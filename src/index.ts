@@ -4,6 +4,7 @@ let createError = require('http-errors');
 let path = require('path');
 
 let indexRouter = require('./routes/main');
+let badgeClassRouter = require('./routes/badgeClass')
 
 const PORT = 5000;
 const app: Application = express();
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/badgeClass', badgeClassRouter)
 
 // database setup
 let mongoose = require('mongoose');
