@@ -5,6 +5,7 @@ const path = require('path');
 
 const indexRouter = require('./routes/main');
 const badgeClassRouter = require('./routes/badgeClass')
+const assertionRouter = require('./routes/assertion')
 
 const PORT = 5000;
 const app: Application = express();
@@ -17,6 +18,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/badgeClass', badgeClassRouter)
+app.use('/assertion', assertionRouter)
 
 // database setup
 const mongoose = require('mongoose');

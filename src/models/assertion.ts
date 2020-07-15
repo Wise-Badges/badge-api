@@ -5,12 +5,13 @@ const Schema = mongoose.Schema;
 const AssertionSchema = new Schema(
     {
         "@context":  {type: String, required: true},
-        recipient: {type: String, required: true},
+        recipient: {"type": { type: String, requiered: true}, hashed: {type:Boolean, requiered: true}, identity: {type:String, requiered: true}, name: {type:String} },
+        sender: {identity: {type:String}, name: {type:String}},
         type: {type:String, required:true}, //"Assertion"
         badge: {type:String, required: true},
-        verification: {type:String, required: true},
         issuedOn: {type:String, required: true},
-        evidence: {type:String, required: true} //link to post
+        evidence: {id: { type: String, requiered: true} }, //link to post
+        verfication: { "type": {String, requiered: true} }
     },
     {
         //makes sure showing this object doesn't give the _id info
@@ -23,9 +24,9 @@ const AssertionSchema = new Schema(
 AssertionSchema
     .virtual('id')
     .get(function (this: any) {
-            return '/badgeclass/' + this._id;
+            return '/assertion/' + this._id;
     });
 
 
 //Export model
-module.exports = mongoose.model('Issuer', AssertionSchema);
+module.exports = mongoose.model('Assertion', AssertionSchema);
