@@ -21,16 +21,37 @@ exports.assertion_detail = function(req: Request, res: Response) {
         .exec(function (err: Error, assertion: any) {
             if (assertion == null) {
                 res.status(404).send();
-                return;
             }
-            let as = assertion.toJSON();
-            //make URL/ID absolute
-            as.id = tools.server_url + as.id;
-            res.json(as);
+            else {
+                let as = assertion.toJSON();
+                //make URL/ID absolute
+                as.id = tools.server_url + as.id;
+                res.json(as);
             }
-        );
+        });
 };
 
 exports.assertion_create = function(req: Request, res: Response) {
-    //TODO
+    let assertion = new Assertion(
+        {  "@context":  "https://w3id.org/openbadges/v2",
+        recipient: {type: "url", hashed: false, identity: req.body.receiver, name: req.body.receiverName},
+        sender: {identity: req.body.sender, name: req.body.senderName},
+        type: "Assertion",
+        badge: req.body.badgeclass,
+        issuedOn: new Date().toString(),
+        evidence: {id: req.body.reason },
+        verfication: { type: "hosted" }
+        });
+
+    assertion.save(function (err: Error) {
+        //TODO: is this error handling correct
+        if (err) { 
+            console.log("error")
+            res.send(err)}
+        else {
+            console.log("success")
+            res.status(200).send( {created : tools.server_url + assertion.id});
+        }
+    });
+
 };

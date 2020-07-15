@@ -20,7 +20,7 @@ const BadgeClassSchema = new Schema(
 );
 
 //the url/id of a badgeclass is dependent of the _id and this is not predefined, so make it a virtual property
-//TODO: correct type for this
+//TODO: correct type for "this"
 BadgeClassSchema
     .virtual('id')
     .get(function (this: any) {

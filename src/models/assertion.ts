@@ -6,7 +6,7 @@ const AssertionSchema = new Schema(
     {
         "@context":  {type: String, required: true},
         recipient: {"type": { type: String, requiered: true}, hashed: {type:Boolean, requiered: true}, identity: {type:String, requiered: true}, name: {type:String} },
-        sender: {identity: {type:String}, name: {type:String}},
+        sender: {identity: {type:String}, name: {type:String}}, //sender is not a field of an Open Badge, we add this to have fast access to who sent the Badge (not the issuer)
         type: {type:String, required:true}, //"Assertion"
         badge: {type:String, required: true},
         issuedOn: {type:String, required: true},
@@ -20,7 +20,7 @@ const AssertionSchema = new Schema(
     }
 );
 
-//TODO: correct this type
+//TODO: correct "this" type
 AssertionSchema
     .virtual('id')
     .get(function (this: any) {

@@ -19,6 +19,7 @@ router.get('/', (req: Request, res: Response): void => {
 router.get('/issuer', (req: Request, res: Response): void => {
   Issuer.findOne()
   .exec(function (err: Error, issuer: Object) {
+    //TODO: is this error handling correct
       if (err) { res.status(404) }
       else {
         res.json(issuer)
