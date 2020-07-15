@@ -1,5 +1,5 @@
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 /*
 
@@ -10,7 +10,7 @@ and based on the needs of the API
 
 */
 
-let IssuerSchema = new Schema(
+const IssuerSchema = new Schema(
     {
         "@context":  {type: String, required: true},
         type: {type: String, required: true},

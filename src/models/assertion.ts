@@ -1,4 +1,4 @@
-let AssertionSchema = new Schema(
+const AssertionSchema = new Schema(
     {
         "@context":  {type: String, required: true},
         recipient: {type: String, required: true},

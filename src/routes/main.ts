@@ -1,7 +1,7 @@
-let express = require('express');
-let router = express.Router();
-let Issuer = require('../models/issuer');
-let tools = require('../bin/tools')
+const express = require('express');
+const router = express.Router();
+const Issuer = require('../models/issuer');
+const tools = require('../bin/tools')
 import {Request, Response} from 'express';
 
 // GET request for "home page": give links to all possibilities

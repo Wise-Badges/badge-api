@@ -1,10 +1,10 @@
 import express, { Application, Request, Response, NextFunction} from 'express';
 
-let createError = require('http-errors');
-let path = require('path');
+const createError = require('http-errors');
+const path = require('path');
 
-let indexRouter = require('./routes/main');
-let badgeClassRouter = require('./routes/badgeClass')
+const indexRouter = require('./routes/main');
+const badgeClassRouter = require('./routes/badgeClass')
 
 const PORT = 5000;
 const app: Application = express();
@@ -19,11 +19,11 @@ app.use('/', indexRouter);
 app.use('/badgeClass', badgeClassRouter)
 
 // database setup
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 mongoose.set('useFindAndModify', false);
-let mongoDB = 'mongodb://localhost/wise';
+const mongoDB = 'mongodb://localhost/wise';
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
-let db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // listen on specified port

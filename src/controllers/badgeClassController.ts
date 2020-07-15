@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-let BadgeClass = require('../models/badgeClass');
+const BadgeClass = require('../models/badgeClass');
 
 const tools = require('../bin/tools');
 

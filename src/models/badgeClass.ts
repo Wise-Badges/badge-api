@@ -1,7 +1,7 @@
-let mongoose1 = require('mongoose');
-let Schema1 = mongoose1.Schema;
+const mongoose1 = require('mongoose');
+const Schema1 = mongoose1.Schema;
 
-let BadgeClassSchema = new Schema1(
+const BadgeClassSchema = new Schema1(
     {
         "@context":  {type: String, required: true},
         type: {type: String, required: true}, //"BadgeClass"
