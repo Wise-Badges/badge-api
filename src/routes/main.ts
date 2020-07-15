@@ -1,15 +1,15 @@
 let express = require('express');
 let router = express.Router();
 let Issuer = require('../models/issuer');
+let tools = require('../bin/tools')
 import {Request, Response} from 'express';
 
 // GET request for "home page": give links to all possibilities
-// TODO: add actual absolute URL
 router.get('/', (req: Request, res: Response): void => {
     res.status(200).send({ 
-      badges: '/badges' ,
-      badgeclasses: '/badgeclasses',
-      issuer: '/issuer',
+      badges: tools.server_url + '/badges' ,
+      badgeclasses: tools.server_url + '/badgeclass/list',
+      issuer: tools.server_url + '/issuer',
     });
   });
 

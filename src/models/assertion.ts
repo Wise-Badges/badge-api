@@ -2,7 +2,6 @@ let AssertionSchema = new Schema(
     {
         "@context":  {type: String, required: true},
         recipient: {type: String, required: true},
-        id: {type:String, required: true},
         type: {type:String, required:true}, //"Assertion"
         badge: {type:String, required: true},
         verification: {type:String, required: true},
@@ -15,6 +14,14 @@ let AssertionSchema = new Schema(
         toJSON: { virtuals: true, transform: (doc: Document, obj: any) => {delete obj.__v; delete obj._id; return obj;}}
     }
 );
+
+//TODO: correct this type
+AssertionSchema
+    .virtual('id')
+    .get(function (this: any) {
+            return '/badgeclass/' + this._id;
+    });
+
 
 //Export model
 module.exports = mongoose.model('Issuer', AssertionSchema);

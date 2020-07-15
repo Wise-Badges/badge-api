@@ -10,7 +10,6 @@ and based on the needs of the API
 
 */
 
-
 let IssuerSchema = new Schema(
     {
         "@context":  {type: String, required: true},
