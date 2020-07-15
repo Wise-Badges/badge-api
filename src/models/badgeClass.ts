@@ -1,14 +1,15 @@
-const mongoose1 = require('mongoose');
-const Schema1 = mongoose1.Schema;
+export {}
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const BadgeClassSchema = new Schema1(
+const BadgeClassSchema = new Schema(
     {
         "@context":  {type: String, required: true},
         type: {type: String, required: true}, //"BadgeClass"
         name: {type:String, required: true},
         description: {type:String, required: true},
         image: {type:String, required: true},
-        criteria: {type:String, required: true}, //with narrative!
+        criteria: { narrative: { type: String, requiered: true} }, //with narrative!
         issuer: {type:String, required: true},
     },
     {
@@ -27,4 +28,4 @@ BadgeClassSchema
     });
 
 //Export model
-module.exports = mongoose1.model('BadgeClass', BadgeClassSchema);
+module.exports = mongoose.model('BadgeClass', BadgeClassSchema);
