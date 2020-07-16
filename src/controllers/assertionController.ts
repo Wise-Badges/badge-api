@@ -19,7 +19,6 @@ exports.assertion_list = function(req: Request, res: Response) {
         });
 };
 
-
 exports.assertion_detail = function(req: Request, res: Response) {
     Assertion.findById(req.params.id)
         .exec(function (err: Error, assertion: any) {
@@ -57,7 +56,6 @@ exports.assertion_create = function(req: Request, res: Response) {
 
 };
 
-
 //TODO: any type
 
 exports.assertion_accept =  function(req: Request, res: Response) {
@@ -82,43 +80,44 @@ exports.assertion_delete = function(req: Request, res: Response) {
     });
 };
 
+// refactor needed D:
 exports.assertion_badge = function(req: Request, res: Response) {
     Assertion.findById(req.params.id)
     .exec(function (err: Error, assertion: any) {
-
         if (assertion == null) {
             res.status(404).send();
-        } else {
-            Badgeclass.findById(assertion.badge.split('/').pop())
-            .exec(function (err: Error, badgeclass: any) {
+            return;
+        }
+        Badgeclass.findById(assertion.badge.split('/').pop())
+        .exec(function (err: Error, badgeclass: any) {
+            if (badgeclass == null){
+                res.status(404).send()
+                return;
+            }
+            async.waterfall([
+                async.apply(getBadgeImage, badgeclass.image)
+            ], function (err: Error, badgeImage: any) {
+                if (badgeImage == null)
+                    return;
 
-                if (badgeclass == null){
-                    res.status(404).send()
-                } else {
-                async.waterfall([
-                    getBadgeImage
-                ], function (err: Error, badgeImage: any) {
-                    bakery.bake({
-                        image: badgeImage,
-                        assertion: assertion.toJSON()}, 
-                        function (err: Error, imageData: any) {
-                            res.set('Content-Type', 'image/png');
-                            res.set('Content-Disposition', 'attachment; filename='+ badgeclass.name + '.png');
-                            res.set('Content-Length', imageData.length);
-                            res.end(imageData, 'binary');
-                            return;
-                    });
-                })
-                }
+                bakery.bake({
+                    image: badgeImage,
+                    assertion: assertion.toJSON()}, 
+                    function (err: Error, imageData: any) {
+                        res.set('Content-Type', 'image/png');
+                        res.set('Content-Disposition', 'attachment; filename='+ badgeclass.name + '.png');
+                        res.set('Content-Length', imageData.length);
+                        res.end(imageData, 'binary');
+                        return;
+                });
             });
-        };
-    });
-   
+        });
+    }); 
 };
 
-function getBadgeImage(callback: CallableFunction) {
+function getBadgeImage(image: String, callback: CallableFunction) {
     const options = {
-        url: 'http://wisebadges.wabyte.com/WiseBadges.png',
+        url: image,
         method: "get",
         encoding: null
     };
@@ -126,6 +125,7 @@ function getBadgeImage(callback: CallableFunction) {
     request(options, function (error: Error, response: Response, body:any) {
         if (error) {
             response.send(error);
+            callback(null,null)
         } else {
             callback(null, body)
         }
