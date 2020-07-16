@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Issuer = require('../models/issuer');
 const tools = require('../bin/tools');
-const badgeClass_controller = require('../controllers/badgeClassController');
+const badgeclass_controller = require('../controllers/badgeclassController');
 const assertion_controller = require('../controllers/assertionController');
 import {Request, Response} from 'express';
 
@@ -28,7 +28,7 @@ router.get('/issuer', (req: Request, res: Response): void => {
 })
 
 // GET request for all badge classes
-router.get('/badgeclasses', badgeClass_controller.badgeClass_list);
+router.get('/badgeclasses', badgeclass_controller.badgeclass_list);
 
 // GET request for all assertions
 router.get('/assertions', assertion_controller.assertion_list)

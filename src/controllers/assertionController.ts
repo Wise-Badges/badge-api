@@ -46,10 +46,8 @@ exports.assertion_create = function(req: Request, res: Response) {
     assertion.save(function (err: Error) {
         //TODO: is this error handling correct
         if (err) { 
-            console.log("error")
             res.send(err)}
         else {
-            console.log("success")
             res.status(200).send(tools.server_url + assertion.id);
         }
     });

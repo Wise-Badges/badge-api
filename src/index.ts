@@ -7,7 +7,7 @@ const createError = require('http-errors');
 const path = require('path');
 
 const indexRouter = require('./routes/main');
-const badgeClassRouter = require('./routes/badgeClass')
+const badgeclassRouter = require('./routes/badgeclass')
 const assertionRouter = require('./routes/assertion')
 
 const PORT = 5000;
@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/badgeClass', badgeClassRouter)
+app.use('/badgeclass', badgeclassRouter)
 app.use('/assertion', assertionRouter)
 
 // database setup
