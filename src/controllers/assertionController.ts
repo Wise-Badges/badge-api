@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 const Assertion = require('../models/assertion');
+const Badgeclass = require('../models/badgeclass');
 const tools = require('../bin/tools');
 const async = require("async");
+const request = require('request');
 const bakery = require('openbadges-bakery-v2'); 
-/** unofficial bakery because the official one isn't supported by Mozilla anymore **/
 
 //TODO: any -> correct type
 
@@ -24,8 +25,7 @@ exports.assertion_detail = function(req: Request, res: Response) {
         .exec(function (err: Error, assertion: any) {
             if (assertion == null) {
                 res.status(404).send();
-            }
-            else {
+            } else {
                 let as = assertion.toJSON();
                 //make URL/ID absolute
                 as.id = tools.server_url + as.id;
@@ -49,8 +49,8 @@ exports.assertion_create = function(req: Request, res: Response) {
     assertion.save(function (err: Error) {
         //TODO: is this error handling correct
         if (err) { 
-            res.send(err)}
-        else {
+            res.send(err)
+        } else {
             res.status(200).send(tools.server_url + assertion.id);
         }
     });
@@ -83,27 +83,40 @@ exports.assertion_delete = function(req: Request, res: Response) {
 };
 
 exports.assertion_badge = function(req: Request, res: Response) {
-    let assertion = {"recipient":{"type":"url","hashed":false,"identity":"https://twitter.com/Sarah_VanDenB","name":"@sarah_vandenb"},"sender":{"identity":"https://twitter.com/fvspeybr","name":"@fvspeybr"},"evidence":{"id":"https://twitter.com/fvspeybr/status/1283302666005811200"},"accepted":true,"@context":"https://w3id.org/openbadges/v2","type":"Assertion","badge":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849","issuedOn":"2020-07-15T09:10:05+00:00","verification":{"type":"hosted"},"id":"http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"};
-    async.waterfall([
-        getBadgeImage
-    ], function (err: Error, badgeImage: any) {
+    Assertion.findById(req.params.id)
+    .exec(function (err: Error, assertion: any) {
 
-        bakery.bake({
-            image: badgeImage,
-            assertion: assertion}, 
-            function (err: Error, imageData: any) {
-            console.log("imageData "+JSON.stringify(imageData));
-                res.set('Content-Type', 'image/png')
-                res.set('Content-Disposition', 'attachment; filename='+"testBadge"+'');
-                res.set('Content-Length', imageData.length);
-                res.end(imageData, 'binary');
-                return;
-        });
+        if (assertion == null) {
+            res.status(404).send();
+        } else {
+            Badgeclass.findById(assertion.badge.split('/').pop())
+            .exec(function (err: Error, badgeclass: any) {
+
+                if (badgeclass == null){
+                    res.status(404).send()
+                } else {
+                async.waterfall([
+                    getBadgeImage
+                ], function (err: Error, badgeImage: any) {
+                    bakery.bake({
+                        image: badgeImage,
+                        assertion: assertion.toJSON()}, 
+                        function (err: Error, imageData: any) {
+                            res.set('Content-Type', 'image/png');
+                            res.set('Content-Disposition', 'attachment; filename='+ badgeclass.name + '.png');
+                            res.set('Content-Length', imageData.length);
+                            res.end(imageData, 'binary');
+                            return;
+                    });
+                })
+                }
+            });
+        };
     });
+   
 };
 
-function getBadgeImage(callback: any): any {
-    const request = require('request');
+function getBadgeImage(callback: CallableFunction) {
     const options = {
         url: 'http://wisebadges.wabyte.com/WiseBadges.png',
         method: "get",

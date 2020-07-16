@@ -6,7 +6,7 @@ const badgeclassSchema = new Schema(
     {
         "@context":  {type: String, required: true},
         type: {type: String, required: true}, //"badgeclass"
-        name: {type:String, required: true},
+        name: {type:String, required: true}, //no spaces!
         description: {type:String, required: true},
         image: {type:String, required: true},
         criteria: { narrative: { type: String, requiered: true} }, //with narrative!
