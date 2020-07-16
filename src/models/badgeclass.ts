@@ -2,10 +2,10 @@ export {}
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const BadgeClassSchema = new Schema(
+const badgeclassSchema = new Schema(
     {
         "@context":  {type: String, required: true},
-        type: {type: String, required: true}, //"BadgeClass"
+        type: {type: String, required: true}, //"badgeclass"
         name: {type:String, required: true},
         description: {type:String, required: true},
         image: {type:String, required: true},
@@ -21,11 +21,11 @@ const BadgeClassSchema = new Schema(
 
 //the url/id of a badgeclass is dependent of the _id and this is not predefined, so make it a virtual property
 //TODO: correct type for "this"
-BadgeClassSchema
+badgeclassSchema
     .virtual('id')
     .get(function (this: any) {
             return '/badgeclass/' + this._id;
     });
 
 //Export model
-module.exports = mongoose.model('BadgeClass', BadgeClassSchema);
+module.exports = mongoose.model('badgeclass', badgeclassSchema);

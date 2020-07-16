@@ -8,5 +8,9 @@ router.get('/:id', assertion_controller.assertion_detail)
 
 router.post('/', assertion_controller.assertion_create)
 
+router.patch('/:id', assertion_controller.assertion_accept)
+
+router.delete('/:id', assertion_controller.assertion_delete)
+
 module.exports = router;
 
