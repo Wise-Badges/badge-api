@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 const Assertion = require('../models/assertion');
 const tools = require('../bin/tools');
+const async = require("async");
+const bakery = require('openbadges-bakery'); 
+/** unofficial bakery because the official one isn't supported by Mozilla anymore **/
 
 //TODO: any -> correct type
 
@@ -78,3 +81,63 @@ exports.assertion_delete = function(req: Request, res: Response) {
         } 
     });
 };
+
+exports.assertion_badge = function(req: Request, res: Response) {
+    let assertion = {"recipient":{"type":"url","hashed":false,"identity":"https://twitter.com/Sarah_VanDenB","name":"@sarah_vandenb"},"sender":{"identity":"https://twitter.com/fvspeybr","name":"@fvspeybr"},"evidence":{"id":"https://twitter.com/fvspeybr/status/1283302666005811200"},"accepted":true,"@context":"https://w3id.org/openbadges/v2","type":"Assertion","badge":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849","issuedOn":"2020-07-15T09:10:05+00:00","verification":{"type":"hosted"},"id":"http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"};
+    async.waterfall([
+        getBadgeImage2
+    ], function (err: Error, badgeImage: any) {
+        //const file = Buffer.from(badgeImage, 'base64');
+        console.log(badgeImage)
+
+        bakery.bake({
+            image: badgeImage,
+            assertion: assertion}, 
+            function (err: Error, imageData: any) {
+                console.log("baking")
+            console.log("ERR "+err);
+            console.log("imageData "+JSON.stringify(imageData));
+                res.set('Content-Type', 'image/png')
+                res.set('Content-Disposition', 'attachment; filename='+"testBadge"+'');
+                res.set('Content-Length', imageData.length);
+                res.end(imageData, 'binary');
+                return;
+        });
+    });
+};
+
+function getBadgeImage(callback: any): any {
+    var imageRequest = require('request').defaults({ encoding: null });
+    var badgeImageURL = 'http://wisebadges.wabyte.com/WiseBadges.png';
+
+    imageRequest.get(badgeImageURL, function (err:Error, response:Response, body:any) {
+        if (!err && response.statusCode == 200) {
+            let badgeImage = Buffer.from(body).toString('base64');
+            callback(null, badgeImage);
+        }
+    });
+};
+
+
+function getBadgeImage2(callback: any): any {
+    var request = require('request');
+    var fs = require('fs');
+    
+    var options = {
+        url: 'http://wisebadges.wabyte.com/WiseBadges.png',
+        method: "get",
+        encoding: null
+    };
+    
+    console.log('Requesting image..');
+    request(options, function (error: Error, response: Response, body:any) {
+        if (error) {
+            console.error('error:', error);
+        } else {
+            console.log('Response: StatusCode:', response && response.statusCode);
+            console.log('Response: Body: Length: %d. Is buffer: %s', body.length, (body instanceof Buffer));
+            callback(null, body)
+            //fs.writeFileSync('test.jpg', body);
+        }
+    });
+}
