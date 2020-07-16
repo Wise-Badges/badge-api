@@ -50,8 +50,20 @@ exports.assertion_create = function(req: Request, res: Response) {
             res.send(err)}
         else {
             console.log("success")
-            res.status(200).send( {created : tools.server_url + assertion.id});
+            res.status(200).send(tools.server_url + assertion.id);
         }
     });
 
+};
+
+exports.assertion_accept =  function(req: Request, res: Response) {
+    Assertion.findByIdAndUpdate(req.params.id,
+        {$set: {accepted: true}},
+        {new: false})
+        .then((assertion: any) => {  //TODO: any type
+            res.status(200).send(tools.server_url + assertion.id)
+        })
+        .catch((err: Error) => {
+            res.send(err)
+        })
 };
