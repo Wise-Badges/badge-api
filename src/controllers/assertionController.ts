@@ -41,7 +41,7 @@ exports.assertion_create = function(req: Request, res: Response) {
         type: "Assertion",
         badge: req.body.badgeclass,
         issuedOn: new Date().toString(),
-        evidence: {id: req.body.reason },
+        evidence: {id: req.body.reason, narrative: "Issued with " + req.body.platform + "by " + req.body.receiverName + "." },
         verfication: { type: "hosted" }
         });
 
