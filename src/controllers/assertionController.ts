@@ -56,14 +56,27 @@ exports.assertion_create = function(req: Request, res: Response) {
 
 };
 
+
+//TODO: any type
+
 exports.assertion_accept =  function(req: Request, res: Response) {
     Assertion.findByIdAndUpdate(req.params.id,
         {$set: {accepted: true}},
         {new: false})
-        .then((assertion: any) => {  //TODO: any type
+        .then((assertion: any) => { 
             res.status(200).send(tools.server_url + assertion.id)
         })
         .catch((err: Error) => {
             res.send(err)
-        })
+        });
+};
+
+exports.assertion_delete = function(req: Request, res: Response) {
+    Assertion.findByIdAndDelete(req.params.id, (err: Error, docs: any) => { 
+        if (err){ 
+            res.send(err);
+        } else { 
+            res.status(200).send();
+        } 
+    });
 };
