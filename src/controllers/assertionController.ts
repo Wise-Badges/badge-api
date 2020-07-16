@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 const Assertion = require('../models/assertion');
+const Badgeclass = require('../models/badgeclass');
 const tools = require('../bin/tools');
+const async = require("async");
+const request = require('request');
+const bakery = require('openbadges-bakery-v2'); 
 
 //TODO: any -> correct type
 
@@ -15,14 +19,12 @@ exports.assertion_list = function(req: Request, res: Response) {
         });
 };
 
-
 exports.assertion_detail = function(req: Request, res: Response) {
     Assertion.findById(req.params.id)
         .exec(function (err: Error, assertion: any) {
             if (assertion == null) {
                 res.status(404).send();
-            }
-            else {
+            } else {
                 let as = assertion.toJSON();
                 //make URL/ID absolute
                 as.id = tools.server_url + as.id;
@@ -46,14 +48,13 @@ exports.assertion_create = function(req: Request, res: Response) {
     assertion.save(function (err: Error) {
         //TODO: is this error handling correct
         if (err) { 
-            res.send(err)}
-        else {
+            res.send(err)
+        } else {
             res.status(200).send(tools.server_url + assertion.id);
         }
     });
 
 };
-
 
 //TODO: any type
 
@@ -78,3 +79,55 @@ exports.assertion_delete = function(req: Request, res: Response) {
         } 
     });
 };
+
+// refactor needed D:
+exports.assertion_badge = function(req: Request, res: Response) {
+    Assertion.findById(req.params.id)
+    .exec(function (err: Error, assertion: any) {
+        if (assertion == null) {
+            res.status(404).send();
+            return;
+        }
+        Badgeclass.findById(assertion.badge.split('/').pop())
+        .exec(function (err: Error, badgeclass: any) {
+            if (badgeclass == null){
+                res.status(404).send()
+                return;
+            }
+            async.waterfall([
+                async.apply(getBadgeImage, badgeclass.image)
+            ], function (err: Error, badgeImage: any) {
+                if (badgeImage == null)
+                    return;
+
+                bakery.bake({
+                    image: badgeImage,
+                    assertion: assertion.toJSON()}, 
+                    function (err: Error, imageData: any) {
+                        res.set('Content-Type', 'image/png');
+                        res.set('Content-Disposition', 'attachment; filename='+ badgeclass.name + '.png');
+                        res.set('Content-Length', imageData.length);
+                        res.end(imageData, 'binary');
+                        return;
+                });
+            });
+        });
+    }); 
+};
+
+function getBadgeImage(image: String, callback: CallableFunction) {
+    const options = {
+        url: image,
+        method: "get",
+        encoding: null
+    };
+
+    request(options, function (error: Error, response: Response, body:any) {
+        if (error) {
+            response.send(error);
+            callback(null,null)
+        } else {
+            callback(null, body)
+        }
+    });
+}

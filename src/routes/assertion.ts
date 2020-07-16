@@ -12,5 +12,8 @@ router.patch('/:id', assertion_controller.assertion_accept)
 
 router.delete('/:id', assertion_controller.assertion_delete)
 
+//get verifiable open badge
+router.get('/:id/badge', assertion_controller.assertion_badge)
+
 module.exports = router;
 
