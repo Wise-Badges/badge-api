@@ -1,16 +1,13 @@
 import { Request, Response } from "express";
 const badgeclass = require('../models/badgeclass');
-const tools = require('../bin/tools');
+const global = require('../bin/global');
 
 //TODO: any -> correct type
 
 exports.badgeclass_list = function(req: Request, res: Response) {
     badgeclass.find({})
         .exec(function (err: Error, list_badgeclasses: Array<any>) {
-            let list: any[]  = [];
-            list_badgeclasses.forEach(badgeclass =>  {
-                list = list.concat([tools.server_url + badgeclass.id])
-            });
+            const list = list_badgeclasses.map(badgeclass => global.SERVER_URL + badgeclass.id)
             res.json( {badgeclasses: list} )
         });
 };
@@ -23,7 +20,7 @@ exports.badgeclass_detail = function(req: Request, res: Response) {
             }
             let bc = badgeclass.toJSON();
             //make URL/ID absolute
-            bc.id = tools.server_url + bc.id;
+            bc.id = global.SERVER_URL + bc.id;
             res.json(bc);
             }
         );

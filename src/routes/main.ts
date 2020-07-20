@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Issuer = require('../models/issuer');
-const tools = require('../bin/tools');
+const global = require('../bin/global');
 const badgeclass_controller = require('../controllers/badgeclassController');
 const assertion_controller = require('../controllers/assertionController');
 import {Request, Response} from 'express';
@@ -9,9 +9,9 @@ import {Request, Response} from 'express';
 // GET request for "home page": give links to all possibilities
 router.get('/', (req: Request, res: Response): void => {
     res.status(200).send({ 
-      assertions: tools.server_url + '/assertions' ,
-      badgeclasses: tools.server_url + '/badgeclasses',
-      issuer: tools.server_url + '/issuer',
+      assertions: global.SERVER_URL + '/assertions' ,
+      badgeclasses: global.SERVER_URL + '/badgeclasses',
+      issuer: global.SERVER_URL + '/issuer',
     });
   });
 
