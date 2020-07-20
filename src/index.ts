@@ -26,7 +26,7 @@ app.use('/assertion', assertionRouter)
 // database setup
 const mongoose = require('mongoose');
 mongoose.set('useFindAndModify', false);
-const mongoDB = "mongodb://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@ds231529.mlab.com:31529/wise-badges-dev"
+const mongoDB = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ds231529.mlab.com:31529/wise-badges-dev`
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
