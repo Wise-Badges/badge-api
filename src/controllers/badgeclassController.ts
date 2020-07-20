@@ -19,8 +19,7 @@ exports.badgeclass_detail = function(req: Request, res: Response) {
     badgeclass.findById(req.params.id)
         .exec(function (err: Error, badgeclass: any) {
             if (badgeclass == null) {
-                res.status(404).send();
-                return;
+                return res.status(404).send();
             }
             let bc = badgeclass.toJSON();
             //make URL/ID absolute
