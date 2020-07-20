@@ -2,17 +2,17 @@ export {};
 
 const express = require('express');
 const router = express.Router();
-const assertion_controller = require('../controllers/assertionController');
+const assertionController = require('../controllers/assertionController');
 
-router.get('/:id', assertion_controller.assertion_detail);
+router.get('/:id', assertionController.showAssertionDetails);
 
-router.post('/', assertion_controller.assertion_create);
+router.post('/', assertionController.createAssertion);
 
-router.patch('/:id', assertion_controller.assertion_accept);
+router.patch('/:id', assertionController.acceptAssertion);
 
-router.delete('/:id', assertion_controller.assertion_delete);
+router.delete('/:id', assertionController.deleteAssertion);
 
 //get verifiable open badge
-router.get('/:id/badge', assertion_controller.assertion_badge);
+router.get('/:id/badge', assertionController.getDownloadableBadge);
 
 module.exports = router;

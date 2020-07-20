@@ -2,8 +2,8 @@ export {};
 
 const express = require('express');
 const router = express.Router();
-const badgeclass_controller = require('../controllers/badgeclassController');
+const badgeclassController = require('../controllers/badgeclassController');
 
-router.get('/:id', badgeclass_controller.badgeclass_detail);
+router.get('/:id', badgeclassController.showBadgeclassDetails);
 
 module.exports = router;

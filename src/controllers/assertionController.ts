@@ -8,7 +8,7 @@ const bakery = require('openbadges-bakery-v2');
 
 //TODO: any -> correct type
 
-exports.assertion_list = function (req: Request, res: Response) {
+exports.listAssertions = function (req: Request, res: Response) {
   Assertion.find({}).exec(function (err: Error, list_assertions: Array<any>) {
     let list: any[] = [];
     list_assertions.forEach((assertion) => {
@@ -18,7 +18,7 @@ exports.assertion_list = function (req: Request, res: Response) {
   });
 };
 
-exports.assertion_detail = function (req: Request, res: Response) {
+exports.showAssertionDetails = function (req: Request, res: Response) {
   Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
     if (assertion == null) {
       res.status(404).send();
@@ -31,7 +31,7 @@ exports.assertion_detail = function (req: Request, res: Response) {
   });
 };
 
-exports.assertion_create = function (req: Request, res: Response) {
+exports.createAssertion = function (req: Request, res: Response) {
   let assertion = new Assertion({
     '@context': 'https://w3id.org/openbadges/v2',
     recipient: {
@@ -63,7 +63,7 @@ exports.assertion_create = function (req: Request, res: Response) {
 
 //TODO: any type & custom types for assertions
 
-exports.assertion_accept = function (req: Request, res: Response) {
+exports.acceptAssertion = function (req: Request, res: Response) {
   Assertion.findByIdAndUpdate(req.params.id, { $set: { accepted: true } }, { new: false })
     .then((assertion: any) => {
       res.status(200).send(global.SERVER_URL + assertion.id);
@@ -73,7 +73,7 @@ exports.assertion_accept = function (req: Request, res: Response) {
     });
 };
 
-exports.assertion_delete = function (req: Request, res: Response) {
+exports.deleteAssertion = function (req: Request, res: Response) {
   Assertion.findByIdAndDelete(req.params.id, (err: Error, docs: any) => {
     if (err) {
       res.send(err);
@@ -84,7 +84,7 @@ exports.assertion_delete = function (req: Request, res: Response) {
 };
 
 // TODO: refactor needed D:, splits in verschillende delen
-exports.assertion_badge = function (req: Request, res: Response) {
+exports.getDownloadableBadge = function (req: Request, res: Response) {
   Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
     if (assertion == null) {
       res.status(404).send();
