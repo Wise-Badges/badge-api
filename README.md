@@ -2,7 +2,6 @@
 # Documentation
 
 ## Create an assertion
-----
   Given some parameters, this method will create an Assertion (https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Assertion) and return the json formatted assertion and the front-end html version.
 
 * **URL:**
@@ -134,6 +133,7 @@ None
   `GET` 
   
 *  **URL Params:**
+
 id: id of the badgeclass
 
 * **Data Params**
@@ -164,6 +164,7 @@ None
   `GET` 
   
 *  **URL Params:**
+
 id: id of the assertion
 
 * **Data Params**
@@ -191,4 +192,63 @@ None
 "id": "http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"
 }
 
+## Get a download link of verifiable Open Badge
+  When sending GET request on this URL, the client will download an Open Badge based on a certain assertion.
 
+* **URL:**
+/assertion/:id/badge
+
+* **Method:**
+  `GET` 
+  
+*  **URL Params:**
+
+id: id of the assertion
+
+* **Data Params**
+None
+
+* **Success Response:**
+  * **Code:** 200 <br />
+    **Content:** file download
+
+## Delete an assertion 
+  When wanting to remove an open badge, we need to remove the assertion. So the given assertion will be removed. Only the recipient/sender should be able to do this.
+
+* **URL:**
+/assertion/:id
+
+* **Method:**
+  `DELETE` 
+  
+*  **URL Params:**
+
+id: id of the assertion to be deleted
+
+* **Data Params**
+None
+
+* **Success Response:**
+  * **Code:** 200 <br />
+    **Content:** /
+   
+ ## Accept a badge / assertion 
+  Before the recipient will be shown on any data visualisation, the recipient has to accept the badge, so this will change a badge from unaccepted to accepted. Make sure only the recipient can do this.
+
+* **URL:**
+/assertion/:id
+
+* **Method:**
+  `PATCH` 
+  
+*  **URL Params:**
+
+id: id of the assertion to be deleted
+
+* **Data Params**
+None
+
+* **Success Response:**
+  * **Code:** 200 <br />
+    **Content:** /  
+ 
