@@ -1,0 +1,3 @@
+# badge-api
+
+## Documentation
