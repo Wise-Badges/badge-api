@@ -9,11 +9,8 @@ const bakery = require('openbadges-bakery-v2');
 //TODO: any -> correct type
 
 exports.listAssertions = function (req: Request, res: Response) {
-  Assertion.find({}).exec(function (err: Error, list_assertions: Array<any>) {
-    let list: any[] = [];
-    list_assertions.forEach((assertion) => {
-      list = list.concat([global.SERVER_URL + assertion.id]);
-    });
+  Assertion.find({}).exec(function (err: Error, assertions: Array<any>) {
+    const list = assertions.map((assertion) => global.SERVER_URL + assertion.id);
     res.json({ assertions: list });
   });
 };
@@ -40,15 +37,22 @@ exports.createAssertion = function (req: Request, res: Response) {
       identity: req.body.receiver,
       name: req.body.receiverName
     },
-    sender: { identity: req.body.sender, name: req.body.senderName },
     type: 'Assertion',
     badge: req.body.badgeclass,
     issuedOn: new Date().toString(),
     evidence: {
       id: req.body.reason,
-      narrative: 'Issued with ' + req.body.platform + 'by ' + req.body.receiverName + '.'
+      narrative:
+        'Issued with ' +
+        req.body.platform +
+        'by ' +
+        req.body.senderName +
+        ' (' +
+        req.body.sender +
+        ').'
     },
-    verfication: { type: 'hosted' }
+    verification: { type: 'hosted' },
+    accepted: false
   });
 
   assertion.save(function (err: Error) {
@@ -56,7 +60,10 @@ exports.createAssertion = function (req: Request, res: Response) {
     if (err) {
       res.send(err);
     } else {
-      res.status(200).send(global.SERVER_URL + assertion.id);
+      res.status(200).send({
+        json: global.SERVER_URL + assertion.id,
+        html: `${global.FRONTEND_URL}/badge/${assertion.id}`
+      });
     }
   });
 };

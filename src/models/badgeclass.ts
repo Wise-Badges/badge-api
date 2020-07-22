@@ -10,7 +10,8 @@ const badgeclassSchema = new Schema(
     description: { type: String, required: true },
     image: { type: String, required: true },
     criteria: { narrative: { type: String, requiered: true } }, //with narrative!
-    issuer: { type: String, required: true }
+    issuer: { type: String, required: true },
+    tag: { type: String, requiered: true } //application specific field, not an open badges standard
   },
   {
     //makes sure showing this object doesn't give the _id info
