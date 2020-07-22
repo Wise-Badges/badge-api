@@ -33,22 +33,37 @@ None
    
    **Example body**
    
-   `{"receiver": "https://twitter.com/bobD", "receiverName": "Bob D.", "sender": "https://twitter.com/susanna", "senderName": "Susanna", "platform": "twitter", "reason": "https://twitter/sometweet123", "badgeclass": "https://api.wisebadges.be/17qjf87j3kpz56" }`
+   ```json
+  {
+    "receiver": "https://twitter.com/bobD",
+    "receiverName": "Bob D.",
+    "sender": "https://twitter.com/susanna",
+    "senderName": "Susanna",
+    "platform": "twitter",
+    "reason": "https://twitter/sometweet123",
+    "badgeclass": "https://api.wisebadges.be/17qjf87j3kpz56"
+  }
+  ```
 
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:** 
-    `{ json: "https://api.wisebadges.be/assertion/5f15ab65a546d6ce7861b12e", html: "https://wisebadges.be/badge/5f15ab65a546d6ce7861b12e}`
+       ```json
+      {
+        "json": "https://api.wisebadges.be/assertion/5f15ab65a546d6ce7861b12e",
+        "html": "https://wisebadges.be/badge/5f15ab65a546d6ce7861b12e"
+      }
+      ```
  
 * **Error Response:**
 
   * **Code:** 404 NOT FOUND <br />
-    **Content:** `{ error : "..." }`
+    **Content:** `{ "error": "..." }`
 
   OR
 
   * **Code:** 500 INTERNAL ERROR <br />
-    **Content:** `{ error : "..."}`
+    **Content:** `{ "error": "..." }`
 
 
 ## Get all badgeclasses
@@ -70,7 +85,20 @@ None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
-  `{ "badgeclasses":[{ "id":"https://","tag":"yourockbadge" },{ "id":"https://", "tag":"testbadge" } ] }`
+    ```json
+    {
+      "badgeclasses":[
+          {
+            "id":"https://",
+            "tag":"yourockbadge"
+          },
+          {
+            "id":"https://",
+            "tag":"testbadge"
+          }
+      ]
+    }
+    ```
   
 ## Get all assertions
 ----
@@ -91,8 +119,15 @@ None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
-  `{ "assertions": ["https://", "https://" ] }`
-  
+    ```json
+    {
+      "assertions":[
+          "https://",
+          "https://"
+      ]
+    }
+    ```
+
 ## Get the issuer
 ----
   This will show a list of all issued assertions.
@@ -112,15 +147,17 @@ None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
+    ```json
     {
-"@context": "https://w3id.org/openbadges/v2",
-"type": "Issuer",
-"id": "http://localhost:5000/issuer",
-"name": "WISE Badges",
-"url": "https://wisebadges.be",
-"email": "wise@osoc.be",
-"image": "http://wisebadges.wabyte.com/WiseBadges.png"
-}
+      "@context":"https://w3id.org/openbadges/v2",
+      "type":"Issuer",
+      "id":"http://localhost:5000/issuer",
+      "name":"WISE Badges",
+      "url":"https://wisebadges.be",
+      "email":"wise@osoc.be",
+      "image":"http://wisebadges.wabyte.com/WiseBadges.png"
+    }
+    ```
 
 ## Get a badgeclass
 ----
@@ -142,16 +179,20 @@ None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
-{
-"criteria": { "narrative": "just testing"},
-"@context": "https://w3id.org/openbadges/v2",
-"type": "BadgeClass",
-"name": "example",
-"description": "just a test badge",
-"image": "http://wisebadges.wabyte.com/WiseBadges.png",
-"issuer": "http://localhost:5000/issuer",
-"id": "http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849"
-}
+    ```json
+    {
+      "criteria":{
+          "narrative":"just testing"
+      },
+      "@context":"https://w3id.org/openbadges/v2",
+      "type":"BadgeClass",
+      "name":"example",
+      "description":"just a test badge",
+      "image":"http://wisebadges.wabyte.com/WiseBadges.png",
+      "issuer":"http://localhost:5000/issuer",
+      "id":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849"
+    }
+    ```
 
 ## Get an assertion
 ----
@@ -173,24 +214,32 @@ None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
-{
-"recipient": {
-  "type": "url",
-  "hashed": false,
-  "identity": "https://twitter.com/Sarah_VanDenB",
-  "name": "@sarah_vandenb"},
-"sender": {
-  "identity": "https://twitter.com/fvspeybr",
-  "name": "@fvspeybr"},
-"evidence": {"id": "https://twitter.com/fvspeybr/status/1283302666005811200"},
-"accepted": true,
-"@context": "https://w3id.org/openbadges/v2",
-"type": "Assertion",
-"badge": "http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849",
-"issuedOn": "2020-07-15T09:10:05+00:00",
-"verification": {"type": "hosted"},
-"id": "http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"
-}
+    ```json
+    {
+      "recipient":{
+          "type":"url",
+          "hashed":false,
+          "identity":"https://twitter.com/Sarah_VanDenB",
+          "name":"@sarah_vandenb"
+      },
+      "sender":{
+          "identity":"https://twitter.com/fvspeybr",
+          "name":"@fvspeybr"
+      },
+      "evidence":{
+          "id":"https://twitter.com/fvspeybr/status/1283302666005811200"
+      },
+      "accepted":true,
+      "@context":"https://w3id.org/openbadges/v2",
+      "type":"Assertion",
+      "badge":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849",
+      "issuedOn":"2020-07-15T09:10:05+00:00",
+      "verification":{
+          "type":"hosted"
+      },
+      "id":"http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"
+    }
+    ```
 
 ## Get a download link of verifiable Open Badge
   When sending GET request on this URL, the client will download an Open Badge based on a certain assertion.
