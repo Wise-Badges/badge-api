@@ -1,5 +1,5 @@
 export {};
-const mongoose = require('mongoose');
+import mongoose, { Document } from 'mongoose';
 const Schema = mongoose.Schema;
 
 const badgeclassSchema = new Schema(
@@ -15,7 +15,6 @@ const badgeclassSchema = new Schema(
   },
   {
     //makes sure showing this object doesn't give the _id info
-    //TODO: correct obj type
     toJSON: {
       virtuals: true,
       transform: (doc: Document, obj: any) => {
@@ -28,8 +27,7 @@ const badgeclassSchema = new Schema(
 );
 
 //the url/id of a badgeclass is dependent of the _id and this is not predefined, so make it a virtual property
-//TODO: correct type for "this"
-badgeclassSchema.virtual('id').get(function (this: any) {
+badgeclassSchema.virtual('id').get(function (this: BadgeclassDocument) {
   return '/badgeclass/' + this._id;
 });
 

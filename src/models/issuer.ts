@@ -1,6 +1,5 @@
 export {};
-const mongoose = require('mongoose');
-import { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 /*
 
@@ -23,7 +22,6 @@ const IssuerSchema = new Schema(
   },
   {
     //makes sure showing this object doesn't give the _id info
-    //TODO: give obj correct type
     toJSON: {
       virtuals: true,
       transform: (doc: Document, obj: any) => {
