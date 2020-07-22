@@ -40,7 +40,7 @@ None
     "sender": "https://twitter.com/susanna",
     "senderName": "Susanna",
     "platform": "twitter",
-    "reason": "https://twitter/sometweet123",
+    "reason": "https://twitter.com/sometweet123",
     "badgeclass": "https://api.wisebadges.be/17qjf87j3kpz56"
   }
   ```
@@ -57,17 +57,21 @@ None
  
 * **Error Response:**
 
-  * **Code:** 404 NOT FOUND <br />
-    **Content:** `{ "error": "..." }`
-
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:**
+      ```json
+      [{ "value": "https://twitter/sender/sometweet123",
+        "msg": "Reason should be a (valid) URL linking to a Twitter/Facebook/... post.",
+        "param": "reason",
+        "location": "body"}, 
+        ... ]
+      ```
   OR
 
   * **Code:** 500 INTERNAL ERROR <br />
-    **Content:** `{ "error": "..." }`
 
 
 ## Get all badgeclasses
-----
   This will show a list of all possible badgeclasses.
 
 * **URL:**
@@ -99,9 +103,12 @@ None
       ]
     }
     ```
+     
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL ERROR <br />
   
 ## Get all assertions
-----
   This will show a list of all issued assertions.
 
 * **URL:**
@@ -121,15 +128,18 @@ None
     **Content:**
     ```json
     {
-      "assertions":[
-          "https://",
-          "https://"
+      "assertions": [
+         "http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8",
+         "http://localhost:5000/assertion/5f17fdac351bdc331d64c47b",
       ]
     }
     ```
+    
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL ERROR <br />
 
 ## Get the issuer
-----
   This will show a list of all issued assertions.
 
 * **URL:**
@@ -158,9 +168,12 @@ None
       "image":"http://wisebadges.wabyte.com/WiseBadges.png"
     }
     ```
+    
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL ERROR <br />
 
 ## Get a badgeclass
-----
   This will show the details of a certain badgeclass (given an id)
 
 * **URL:**
@@ -193,9 +206,15 @@ None
       "id":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849"
     }
     ```
+* **Error Response:**
+
+  * **Code:** 404 NOT FOUND <br />
+
+  OR
+
+  * **Code:** 500 INTERNAL ERROR <br />
 
 ## Get an assertion
-----
   This will show the details of an assertion (given an id)
 
 * **URL:**
@@ -240,6 +259,13 @@ None
       "id":"http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"
     }
     ```
+* **Error Response:**
+
+  * **Code:** 404 NOT FOUND <br />
+
+  OR
+
+  * **Code:** 500 INTERNAL ERROR <br />
 
 ## Get a download link of verifiable Open Badge
   When sending GET request on this URL, the client will download an Open Badge based on a certain assertion.
@@ -260,6 +286,17 @@ None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:** file download
+    
+* **Error Response:**
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:**
+      ```json
+      {"Error": "No assertion/badgeclass/image found."}
+      ```
+  OR
+
+  * **Code:** 500 INTERNAL ERROR <br />
 
 ## Delete an assertion 
   When wanting to remove an open badge, we need to remove the assertion. So the given assertion will be removed. Only the recipient/sender should be able to do this.
@@ -278,11 +315,17 @@ id: id of the assertion to be deleted
 None
 
 * **Success Response:**
+
+* **Success Response:**
+
   * **Code:** 200 <br />
-    **Content:** /
+  
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL ERROR <br />
    
  ## Accept a badge / assertion 
-  Before the recipient will be shown on any data visualisation, the recipient has to accept the badge, so this will change a badge from unaccepted to accepted. Make sure only the recipient can do this.
+  Before the recipient will be shown on any data visualisation / listed as a recipient of the badge, the recipient has to accept the badge. This will change a badge from unaccepted to accepted. Make sure only the recipient can do this.
 
 * **URL:**
 /assertion/:id
@@ -298,6 +341,10 @@ id: id of the assertion to be deleted
 None
 
 * **Success Response:**
+
   * **Code:** 200 <br />
-    **Content:** /  
+  
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL ERROR <br />
  
