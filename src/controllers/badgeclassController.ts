@@ -6,7 +6,10 @@ const global = require('../bin/global');
 
 exports.listBadgeclasses = function (req: Request, res: Response) {
   badgeclass.find({}).exec(function (err: Error, badgeclasses: Array<any>) {
-    const list = badgeclasses.map((badgeclass) => global.SERVER_URL + badgeclass.id);
+    const list = badgeclasses.map((badgeclass) => ({
+      tag: badgeclass.tag,
+      id: global.SERVER_URL + badgeclass.id
+    }));
     res.json({ badgeclasses: list });
   });
 };

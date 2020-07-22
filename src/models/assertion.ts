@@ -11,12 +11,11 @@ const AssertionSchema = new Schema(
       identity: { type: String, requiered: true },
       name: { type: String }
     },
-    sender: { identity: { type: String }, name: { type: String } }, //sender is not a field of an Open Badge, we add this to have fast access to who sent the Badge (not the issuer)
     type: { type: String, required: true }, //"Assertion"
     badge: { type: String, required: true },
     issuedOn: { type: String, required: true },
     evidence: { id: { type: String, requiered: true }, narrative: { type: String } }, //link to post
-    verfication: { type: { String, requiered: true } },
+    verification: { type: { String, requiered: true } },
     accepted: { type: Boolean, default: false }
   },
   {
