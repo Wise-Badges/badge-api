@@ -15,7 +15,7 @@ const AssertionSchema = new Schema(
     badge: { type: String, required: true },
     issuedOn: { type: String, required: true },
     evidence: { id: { type: String, requiered: true }, narrative: { type: String } }, //link to post
-    verfication: { type: { String, requiered: true } },
+    verification: { type: { String, requiered: true } },
     accepted: { type: Boolean, default: false }
   },
   {

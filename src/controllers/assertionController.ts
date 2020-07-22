@@ -1,10 +1,11 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 const Assertion = require('../models/assertion');
 const Badgeclass = require('../models/badgeclass');
 const global = require('../bin/global');
 const async = require('async');
 const request = require('request');
 const bakery = require('openbadges-bakery-v2');
+const validator = require('express-validator');
 
 //TODO: any -> correct type
 
@@ -28,45 +29,112 @@ exports.showAssertionDetails = function (req: Request, res: Response) {
   });
 };
 
-exports.createAssertion = function (req: Request, res: Response) {
-  let assertion = new Assertion({
-    '@context': 'https://w3id.org/openbadges/v2',
-    recipient: {
-      type: 'url',
-      hashed: false,
-      identity: req.body.receiver,
-      name: req.body.receiverName
-    },
-    type: 'Assertion',
-    badge: req.body.badgeclass,
-    issuedOn: new Date().toString(),
-    evidence: {
-      id: req.body.reason,
-      narrative:
-        'Issued with ' +
-        req.body.platform +
-        'by ' +
-        req.body.senderName +
-        ' (' +
-        req.body.sender +
-        ').'
-    },
-    verification: { type: 'hosted' },
-    accepted: false
-  });
+//use to validate the body of POST request
+const validateAssertion = [
+  validator
+    .body('receiver')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Receiver identifier cannot be empty.')
+    .isURL()
+    .withMessage('Receiver should be a URL.')
+    .escape(),
 
-  assertion.save(function (err: Error) {
-    //TODO: is this error handling correct
-    if (err) {
-      res.send(err);
-    } else {
-      res.status(200).send({
-        json: global.SERVER_URL + assertion.id,
-        html: `${global.FRONTEND_URL}/badge/${assertion.id}`
-      });
+  validator
+    .body('receiverName')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Receiver name cannot be empty.')
+    .escape(),
+
+  validator
+    .body('sender')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Sender identifier cannot be empty.')
+    .isURL()
+    .withMessage('Sender should be a URL.')
+    .escape(),
+
+  validator
+    .body('senderName')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Sender name cannot be empty.')
+    .escape(),
+
+  validator
+    .body('reason')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Reason cannot be empty.')
+    .isURL()
+    .withMessage('Reason should be a URL linking to a Twitter/Facebook/... post.')
+    .escape(),
+
+  validator
+    .body('platform')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Platform cannot be empty.')
+    .escape(),
+
+  validator
+    .body('badgeclass')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Badgeclass cannot be empty.')
+    .isURL()
+    .withMessage('Badgeclass should be a URL linking to the json of a badgeclass.')
+    .escape()
+];
+
+exports.createAssertion = [
+  validateAssertion,
+  (req: Request, res: Response) => {
+    const errors = validator.validationResult(req);
+    let assertion = new Assertion({
+      '@context': 'https://w3id.org/openbadges/v2',
+      recipient: {
+        type: 'url',
+        hashed: false,
+        identity: req.body.receiver,
+        name: req.body.receiverName
+      },
+      type: 'Assertion',
+      badge: req.body.badgeclass,
+      issuedOn: new Date().toString(),
+      evidence: {
+        id: req.body.reason,
+        narrative:
+          'Issued with ' +
+          req.body.platform +
+          'by ' +
+          req.body.senderName +
+          ' (' +
+          req.body.sender +
+          ').'
+      },
+      verification: { type: 'hosted' },
+      accepted: false
+    });
+
+    if (!errors.isEmpty()) {
+      return res.status(400).send(errors.array());
     }
-  });
-};
+    assertion.save(function (err: Error) {
+      //TODO: is this error handling correct
+      if (err) {
+        res.send(err);
+      } else {
+        res.status(200).send({
+          json: global.SERVER_URL + assertion.id,
+          html: `${global.FRONTEND_URL}/badge/${assertion.id}`
+        });
+      }
+    });
+  }
+];
 
 //TODO: any type & custom types for assertions
 
