@@ -1,6 +1,7 @@
 export {};
 import mongoose, { Document } from 'mongoose';
 const Schema = mongoose.Schema;
+const global = require('../bin/global');
 
 const badgeclassSchema = new Schema(
   {
@@ -28,7 +29,7 @@ const badgeclassSchema = new Schema(
 
 //the url/id of a badgeclass is dependent of the _id and this is not predefined, so make it a virtual property
 badgeclassSchema.virtual('id').get(function (this: BadgeclassDocument) {
-  return '/badgeclass/' + this._id;
+  return global.SERVER_URL + '/badgeclass/' + this._id;
 });
 
 interface BadgeclassI {

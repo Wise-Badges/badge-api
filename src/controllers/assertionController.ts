@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import Assertion, { AssertionDocument } from '../models/assertion';
 import Badgeclass, { BadgeclassDocument } from '../models/badgeclass';
 const global = require('../bin/global');
@@ -9,7 +9,7 @@ const validator = require('express-validator');
 
 exports.listAssertions = function (req: Request, res: Response) {
   Assertion.find({}).exec(function (err: Error, assertions: Array<AssertionDocument>) {
-    const list = assertions.map((assertion) => global.SERVER_URL + assertion.id);
+    const list = assertions.map((assertion) => assertion.id);
     res.json({ assertions: list });
   });
 };
@@ -17,10 +17,7 @@ exports.listAssertions = function (req: Request, res: Response) {
 exports.showAssertionDetails = function (req: Request, res: Response) {
   Assertion.findById(req.params.id).exec(function (err: Error, assertion: AssertionDocument) {
     if (assertion == null) return res.status(404).send();
-    let as = assertion.toJSON();
-    //make URL/ID absolute
-    as.id = global.SERVER_URL + as.id;
-    res.json(as);
+    res.json(assertion.toJSON());
   });
 };
 
@@ -120,8 +117,8 @@ exports.createAssertion = [
     assertion.save(function (err: Error) {
       if (err) return res.status(500).send();
       res.json({
-        json: global.SERVER_URL + assertion.id,
-        html: `${global.FRONTEND_URL}/badge/${assertion.id}`
+        json: assertion.id,
+        html: `${global.FRONTEND_URL}/badge/${assertion._id}`
       });
     });
   }
@@ -138,7 +135,7 @@ exports.acceptAssertion = function (req: Request, res: Response) {
 };
 
 exports.deleteAssertion = function (req: Request, res: Response) {
-  Assertion.findByIdAndDelete(req.params.id, (err: Error, docs: Document) => {
+  Assertion.findByIdAndDelete(req.params.id, (err: Error, docs: any) => {
     if (err) return res.status(500).send();
     res.status(200).send();
   });

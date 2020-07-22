@@ -1,5 +1,6 @@
 export {};
 import mongoose, { Document, Schema } from 'mongoose';
+const global = require('../bin/global');
 
 const AssertionSchema = new Schema(
   {
@@ -32,7 +33,7 @@ const AssertionSchema = new Schema(
 
 //TODO: it might be better to put server url already here, in stead of adding it in the controllers
 AssertionSchema.virtual('id').get(function (this: AssertionDocument) {
-  return '/assertion/' + this._id;
+  return global.SERVER_URL + '/assertion/' + this._id;
 });
 
 interface AssertionI {
