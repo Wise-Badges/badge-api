@@ -1,23 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
-const Assertion = require('../models/assertion');
-const Badgeclass = require('../models/badgeclass');
+import Assertion, { AssertionDocument } from '../models/assertion';
+import Badgeclass, { BadgeclassDocument } from '../models/badgeclass';
 const global = require('../bin/global');
 const async = require('async');
 const request = require('request');
 const bakery = require('openbadges-bakery-v2');
 const validator = require('express-validator');
 
-//TODO: any -> correct type
-
 exports.listAssertions = function (req: Request, res: Response) {
-  Assertion.find({}).exec(function (err: Error, assertions: Array<any>) {
+  Assertion.find({}).exec(function (err: Error, assertions: Array<AssertionDocument>) {
     const list = assertions.map((assertion) => global.SERVER_URL + assertion.id);
     res.json({ assertions: list });
   });
 };
 
 exports.showAssertionDetails = function (req: Request, res: Response) {
-  Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
+  Assertion.findById(req.params.id).exec(function (err: Error, assertion: AssertionDocument) {
     if (assertion == null) return res.status(404).send();
     let as = assertion.toJSON();
     //make URL/ID absolute
@@ -129,8 +127,6 @@ exports.createAssertion = [
   }
 ];
 
-//TODO: any type & custom types for assertions
-
 exports.acceptAssertion = function (req: Request, res: Response) {
   Assertion.findByIdAndUpdate(req.params.id, { $set: { accepted: true } }, { new: false })
     .then(() => {
@@ -142,22 +138,22 @@ exports.acceptAssertion = function (req: Request, res: Response) {
 };
 
 exports.deleteAssertion = function (req: Request, res: Response) {
-  Assertion.findByIdAndDelete(req.params.id, (err: Error, docs: any) => {
+  Assertion.findByIdAndDelete(req.params.id, (err: Error, docs: Document) => {
     if (err) return res.status(500).send();
     res.status(200).send();
   });
 };
 
-// TODO: refactor needed D:
+// TODO: needs refactor
 exports.getDownloadableBadge = function (req: Request, res: Response) {
-  Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
+  Assertion.findById(req.params.id).exec(function (err: Error, assertion: AssertionDocument) {
     if (assertion == null) {
       return res.status(404).send({ error: 'Assertion ID not found.' });
     }
     //assertion has a field badge which contains a URL to the badgeclass, here we are filtering the ID from the URL (it's the last part)
     Badgeclass.findById(assertion.badge.split('/').pop()).exec(function (
       err: Error,
-      badgeclass: any
+      badgeclass: BadgeclassDocument
     ) {
       if (badgeclass == null) {
         return res.status(404).send({ error: 'No badgeclass found for this assertion.' });

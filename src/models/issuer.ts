@@ -1,6 +1,6 @@
 export {};
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Document, Schema } from 'mongoose';
 
 /*
 
@@ -35,5 +35,18 @@ const IssuerSchema = new Schema(
   }
 );
 
+interface IssuerI {
+  '@context': string;
+  type: string;
+  id: string;
+  name: string;
+  image: string;
+  url: string;
+  email: string;
+}
+
+//custom type for Issuer Document
+export type IssuerDocument = IssuerI & Document;
+
 //Export model
-module.exports = mongoose.model('Issuer', IssuerSchema);
+export default mongoose.model('Issuer', IssuerSchema);

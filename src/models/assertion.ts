@@ -33,9 +33,27 @@ const AssertionSchema = new Schema(
 );
 
 //TODO: correct "this" type
+//TODO: it might be better to put server url already here, in stead of adding it in the controllers
 AssertionSchema.virtual('id').get(function (this: any) {
   return '/assertion/' + this._id;
 });
 
+interface AssertionI {
+  '@context': string;
+  recipient: any;
+  type: string;
+  badge: string;
+  issuedOn: string;
+  evidence: any;
+  verification: string;
+  accepted: boolean;
+  id: string;
+
+  toJSON(): any;
+}
+
+//custom type for Assertion Document
+export type AssertionDocument = AssertionI & Document;
+
 //Export model
-module.exports = mongoose.model('Assertion', AssertionSchema);
+export default mongoose.model('Assertion', AssertionSchema);
