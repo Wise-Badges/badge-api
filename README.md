@@ -64,7 +64,7 @@ None
         "msg": "Reason should be a (valid) URL linking to a Twitter/Facebook/... post.",
         "param": "reason",
         "location": "body"}, 
-        ... ]
+        . . . ]
       ```
   OR
 
@@ -92,14 +92,19 @@ None
     ```json
     {
       "badgeclasses":[
-          {
-            "id":"https://",
-            "tag":"yourockbadge"
-          },
-          {
-            "id":"https://",
-            "tag":"testbadge"
-          }
+           {
+      "criteria":{
+          "narrative":"just testing"
+      },
+      "@context":"https://w3id.org/openbadges/v2",
+      "type":"BadgeClass",
+      "name":"example",
+      "description":"just a test badge",
+      "image":"http://wisebadges.wabyte.com/WiseBadges.png",
+      "issuer":"http://localhost:5000/issuer",
+      "id":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849"
+    },
+    . . .
       ]
     }
     ```
