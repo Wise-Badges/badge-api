@@ -1,6 +1,7 @@
 version: '3'
 services:
   badge-api:
+    env_file: .env
     container_name: badge-api
     restart: always
     build: .
