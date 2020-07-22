@@ -18,14 +18,11 @@ exports.listAssertions = function (req: Request, res: Response) {
 
 exports.showAssertionDetails = function (req: Request, res: Response) {
   Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
-    if (assertion == null) {
-      res.status(404).send();
-    } else {
-      let as = assertion.toJSON();
-      //make URL/ID absolute
-      as.id = global.SERVER_URL + as.id;
-      res.json(as);
-    }
+    if (assertion == null) return res.status(404).send();
+    let as = assertion.toJSON();
+    //make URL/ID absolute
+    as.id = global.SERVER_URL + as.id;
+    res.json(as);
   });
 };
 
@@ -37,7 +34,7 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Receiver identifier cannot be empty.')
     .isURL()
-    .withMessage('Receiver should be a URL.')
+    .withMessage('Receiver should be a (valid) URL.')
     .escape(),
 
   validator
@@ -53,7 +50,7 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Sender identifier cannot be empty.')
     .isURL()
-    .withMessage('Sender should be a URL.')
+    .withMessage('Sender should be a (valid) URL.')
     .escape(),
 
   validator
@@ -69,7 +66,7 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Reason cannot be empty.')
     .isURL()
-    .withMessage('Reason should be a URL linking to a Twitter/Facebook/... post.')
+    .withMessage('Reason should be a (valid) URL linking to a Twitter/Facebook/... post.')
     .escape(),
 
   validator
@@ -85,7 +82,7 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Badgeclass cannot be empty.')
     .isURL()
-    .withMessage('Badgeclass should be a URL linking to the json of a badgeclass.')
+    .withMessage('Badgeclass should be a (valid) URL linking to the json of a badgeclass.')
     .escape()
 ];
 
@@ -123,15 +120,11 @@ exports.createAssertion = [
       return res.status(400).send(errors.array());
     }
     assertion.save(function (err: Error) {
-      //TODO: is this error handling correct
-      if (err) {
-        res.send(err);
-      } else {
-        res.status(200).send({
-          json: global.SERVER_URL + assertion.id,
-          html: `${global.FRONTEND_URL}/badge/${assertion.id}`
-        });
-      }
+      if (err) return res.status(500).send();
+      res.json({
+        json: global.SERVER_URL + assertion.id,
+        html: `${global.FRONTEND_URL}/badge/${assertion.id}`
+      });
     });
   }
 ];
@@ -140,30 +133,26 @@ exports.createAssertion = [
 
 exports.acceptAssertion = function (req: Request, res: Response) {
   Assertion.findByIdAndUpdate(req.params.id, { $set: { accepted: true } }, { new: false })
-    .then((assertion: any) => {
-      res.status(200).send(global.SERVER_URL + assertion.id);
+    .then(() => {
+      res.status(200).send();
     })
-    .catch((err: Error) => {
-      res.send(err);
+    .catch(() => {
+      res.status(500).send();
     });
 };
 
 exports.deleteAssertion = function (req: Request, res: Response) {
   Assertion.findByIdAndDelete(req.params.id, (err: Error, docs: any) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.status(200).send();
-    }
+    if (err) return res.status(500).send();
+    res.status(200).send();
   });
 };
 
-// TODO: refactor needed D:, splits in verschillende delen
+// TODO: refactor needed D:
 exports.getDownloadableBadge = function (req: Request, res: Response) {
   Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
     if (assertion == null) {
-      res.status(404).send();
-      return;
+      return res.status(404).send({ error: 'Assertion ID not found.' });
     }
     //assertion has a field badge which contains a URL to the badgeclass, here we are filtering the ID from the URL (it's the last part)
     Badgeclass.findById(assertion.badge.split('/').pop()).exec(function (
@@ -171,15 +160,15 @@ exports.getDownloadableBadge = function (req: Request, res: Response) {
       badgeclass: any
     ) {
       if (badgeclass == null) {
-        res.status(404).send();
-        return;
+        return res.status(404).send({ error: 'No badgeclass found for this assertion.' });
       }
       async.waterfall([async.apply(getBadgeImage, badgeclass.image)], function (
         err: Error,
         badgeImage: any
       ) {
-        if (badgeImage == null) return;
-
+        if (badgeImage == null) {
+          return res.status(404).send({ error: 'No image found for this badgeclass.' });
+        }
         bakery.bake(
           {
             image: badgeImage,
@@ -207,7 +196,6 @@ function getBadgeImage(image: String, callback: CallableFunction) {
 
   request(options, function (error: Error, response: Response, body: any) {
     if (error) {
-      response.send(error);
       callback(null, null);
     } else {
       callback(null, body);
