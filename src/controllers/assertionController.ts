@@ -7,9 +7,30 @@ const request = require('request');
 const bakery = require('openbadges-bakery-v2');
 const validator = require('express-validator');
 
+//TODO: refactor?
 exports.listAssertions = function (req: Request, res: Response) {
   Assertion.find({}).exec(function (err: Error, assertions: Array<AssertionDocument>) {
-    const list = assertions.map((assertion) => assertion.id);
+    let list: any[] = [];
+    console.log(req.query);
+    assertions.forEach((assertion) => {
+      if (!req.query.fields) {
+        list.push(assertion);
+      } else {
+        //split list of fields wanting to show in the result
+        const fields = req.query.fields.toString().split(',');
+        var filter = Object();
+        if (fields.includes('recipient')) filter.recipient = assertion.recipient;
+        if (fields.includes('@context')) filter.context = assertion['@context'];
+        if (fields.includes('type')) filter.type = assertion.type;
+        if (fields.includes('badge')) filter.badge = assertion.badge;
+        if (fields.includes('issuedOn')) filter.issuedOn = assertion.issuedOn;
+        if (fields.includes('evidence')) filter.evidence = assertion.evidence;
+        if (fields.includes('verification')) filter.verification = assertion.verification;
+        if (fields.includes('accepted')) filter.accepted = assertion.accepted;
+        if (fields.includes('id')) filter.id = assertion.id;
+        list.push(filter);
+      }
+    });
     res.json({ assertions: list });
   });
 };
@@ -29,15 +50,13 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Receiver identifier cannot be empty.')
     .isURL()
-    .withMessage('Receiver should be a (valid) URL.')
-    .escape(),
+    .withMessage('Receiver should be a (valid) URL.'),
 
   validator
     .body('receiverName')
     .trim()
     .isLength({ min: 1 })
-    .withMessage('Receiver name cannot be empty.')
-    .escape(),
+    .withMessage('Receiver name cannot be empty.'),
 
   validator
     .body('sender')
@@ -45,15 +64,13 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Sender identifier cannot be empty.')
     .isURL()
-    .withMessage('Sender should be a (valid) URL.')
-    .escape(),
+    .withMessage('Sender should be a (valid) URL.'),
 
   validator
     .body('senderName')
     .trim()
     .isLength({ min: 1 })
-    .withMessage('Sender name cannot be empty.')
-    .escape(),
+    .withMessage('Sender name cannot be empty.'),
 
   validator
     .body('reason')
@@ -61,15 +78,9 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Reason cannot be empty.')
     .isURL()
-    .withMessage('Reason should be a (valid) URL linking to a Twitter/Facebook/... post.')
-    .escape(),
+    .withMessage('Reason should be a (valid) URL linking to a Twitter/Facebook/... post.'),
 
-  validator
-    .body('platform')
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('Platform cannot be empty.')
-    .escape(),
+  validator.body('platform').trim().isLength({ min: 1 }).withMessage('Platform cannot be empty.'),
 
   validator
     .body('badgeclass')
@@ -78,7 +89,6 @@ const validateAssertion = [
     .withMessage('Badgeclass cannot be empty.')
     .isURL()
     .withMessage('Badgeclass should be a (valid) URL linking to the json of a badgeclass.')
-    .escape()
 ];
 
 exports.createAssertion = [
