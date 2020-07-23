@@ -10,11 +10,15 @@ const indexRouter = require('./routes/main');
 const badgeclassRouter = require('./routes/badgeclass');
 const assertionRouter = require('./routes/assertion');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const PORT = process.env.PORT || 5000;
 const app: Application = express();
 
 // routes setup
+
+app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
