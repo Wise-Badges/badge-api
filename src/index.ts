@@ -10,7 +10,7 @@ const indexRouter = require('./routes/main');
 const badgeclassRouter = require('./routes/badgeclass');
 const assertionRouter = require('./routes/assertion');
 const mongoose = require('mongoose');
-var cors = require('cors');
+const cors = require('cors');
 
 const PORT = process.env.PORT || 5000;
 const app: Application = express();
