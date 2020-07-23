@@ -1,27 +1,18 @@
 import { Request, Response } from 'express';
-const badgeclass = require('../models/badgeclass');
-const global = require('../bin/global');
-
-//TODO: any -> correct type
+import Badgeclass, { BadgeclassDocument } from '../models/badgeclass';
 
 exports.listBadgeclasses = function (req: Request, res: Response) {
-  badgeclass.find({}).exec(function (err: Error, badgeclasses: Array<any>) {
-    const list = badgeclasses.map((badgeclass) => ({
-      tag: badgeclass.tag,
-      id: global.SERVER_URL + badgeclass.id
-    }));
+  Badgeclass.find({}).exec(function (err: Error, badgeclasses: Array<BadgeclassDocument>) {
+    const list = badgeclasses.map((badgeclass) => badgeclass.toJSON());
     res.json({ badgeclasses: list });
   });
 };
 
 exports.showBadgeclassDetails = function (req: Request, res: Response) {
-  badgeclass.findById(req.params.id).exec(function (err: Error, badgeclass: any) {
+  Badgeclass.findById(req.params.id).exec(function (err: Error, badgeclass: BadgeclassDocument) {
     if (badgeclass == null) {
       return res.status(404).send();
     }
-    let bc = badgeclass.toJSON();
-    //make URL/ID absolute
-    bc.id = global.SERVER_URL + bc.id;
-    res.json(bc);
+    res.json(badgeclass.toJSON());
   });
 };

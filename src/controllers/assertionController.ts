@@ -1,28 +1,44 @@
-import { Request, Response, NextFunction } from 'express';
-const Assertion = require('../models/assertion');
-const Badgeclass = require('../models/badgeclass');
+import { Request, Response } from 'express';
+import Assertion, { AssertionDocument } from '../models/assertion';
+import Badgeclass, { BadgeclassDocument } from '../models/badgeclass';
 const global = require('../bin/global');
 const async = require('async');
 const request = require('request');
 const bakery = require('openbadges-bakery-v2');
 const validator = require('express-validator');
 
-//TODO: any -> correct type
-
+//TODO: refactor?
 exports.listAssertions = function (req: Request, res: Response) {
-  Assertion.find({}).exec(function (err: Error, assertions: Array<any>) {
-    const list = assertions.map((assertion) => global.SERVER_URL + assertion.id);
+  Assertion.find({}).exec(function (err: Error, assertions: Array<AssertionDocument>) {
+    let list: any[] = [];
+    console.log(req.query);
+    assertions.forEach((assertion) => {
+      if (!req.query.fields) {
+        list.push(assertion);
+      } else {
+        //split list of fields wanting to show in the result
+        const fields = req.query.fields.toString().split(',');
+        var filter = Object();
+        if (fields.includes('recipient')) filter.recipient = assertion.recipient;
+        if (fields.includes('@context')) filter.context = assertion['@context'];
+        if (fields.includes('type')) filter.type = assertion.type;
+        if (fields.includes('badge')) filter.badge = assertion.badge;
+        if (fields.includes('issuedOn')) filter.issuedOn = assertion.issuedOn;
+        if (fields.includes('evidence')) filter.evidence = assertion.evidence;
+        if (fields.includes('verification')) filter.verification = assertion.verification;
+        if (fields.includes('accepted')) filter.accepted = assertion.accepted;
+        if (fields.includes('id')) filter.id = assertion.id;
+        list.push(filter);
+      }
+    });
     res.json({ assertions: list });
   });
 };
 
 exports.showAssertionDetails = function (req: Request, res: Response) {
-  Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
+  Assertion.findById(req.params.id).exec(function (err: Error, assertion: AssertionDocument) {
     if (assertion == null) return res.status(404).send();
-    let as = assertion.toJSON();
-    //make URL/ID absolute
-    as.id = global.SERVER_URL + as.id;
-    res.json(as);
+    res.json(assertion.toJSON());
   });
 };
 
@@ -34,15 +50,13 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Receiver identifier cannot be empty.')
     .isURL()
-    .withMessage('Receiver should be a (valid) URL.')
-    .escape(),
+    .withMessage('Receiver should be a (valid) URL.'),
 
   validator
     .body('receiverName')
     .trim()
     .isLength({ min: 1 })
-    .withMessage('Receiver name cannot be empty.')
-    .escape(),
+    .withMessage('Receiver name cannot be empty.'),
 
   validator
     .body('sender')
@@ -50,15 +64,13 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Sender identifier cannot be empty.')
     .isURL()
-    .withMessage('Sender should be a (valid) URL.')
-    .escape(),
+    .withMessage('Sender should be a (valid) URL.'),
 
   validator
     .body('senderName')
     .trim()
     .isLength({ min: 1 })
-    .withMessage('Sender name cannot be empty.')
-    .escape(),
+    .withMessage('Sender name cannot be empty.'),
 
   validator
     .body('reason')
@@ -66,15 +78,9 @@ const validateAssertion = [
     .isLength({ min: 1 })
     .withMessage('Reason cannot be empty.')
     .isURL()
-    .withMessage('Reason should be a (valid) URL linking to a Twitter/Facebook/... post.')
-    .escape(),
+    .withMessage('Reason should be a (valid) URL linking to a Twitter/Facebook/... post.'),
 
-  validator
-    .body('platform')
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('Platform cannot be empty.')
-    .escape(),
+  validator.body('platform').trim().isLength({ min: 1 }).withMessage('Platform cannot be empty.'),
 
   validator
     .body('badgeclass')
@@ -83,7 +89,6 @@ const validateAssertion = [
     .withMessage('Badgeclass cannot be empty.')
     .isURL()
     .withMessage('Badgeclass should be a (valid) URL linking to the json of a badgeclass.')
-    .escape()
 ];
 
 exports.createAssertion = [
@@ -122,14 +127,12 @@ exports.createAssertion = [
     assertion.save(function (err: Error) {
       if (err) return res.status(500).send();
       res.json({
-        json: global.SERVER_URL + assertion.id,
-        html: `${global.FRONTEND_URL}/badge/${assertion.id}`
+        json: assertion.id,
+        html: `${global.FRONTEND_URL}/badge/${assertion._id}`
       });
     });
   }
 ];
-
-//TODO: any type & custom types for assertions
 
 exports.acceptAssertion = function (req: Request, res: Response) {
   Assertion.findByIdAndUpdate(req.params.id, { $set: { accepted: true } }, { new: false })
@@ -148,16 +151,16 @@ exports.deleteAssertion = function (req: Request, res: Response) {
   });
 };
 
-// TODO: refactor needed D:
+// TODO: needs refactor
 exports.getDownloadableBadge = function (req: Request, res: Response) {
-  Assertion.findById(req.params.id).exec(function (err: Error, assertion: any) {
+  Assertion.findById(req.params.id).exec(function (err: Error, assertion: AssertionDocument) {
     if (assertion == null) {
       return res.status(404).send({ error: 'Assertion ID not found.' });
     }
     //assertion has a field badge which contains a URL to the badgeclass, here we are filtering the ID from the URL (it's the last part)
     Badgeclass.findById(assertion.badge.split('/').pop()).exec(function (
       err: Error,
-      badgeclass: any
+      badgeclass: BadgeclassDocument
     ) {
       if (badgeclass == null) {
         return res.status(404).send({ error: 'No badgeclass found for this assertion.' });

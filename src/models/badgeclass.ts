@@ -1,6 +1,7 @@
 export {};
-const mongoose = require('mongoose');
+import mongoose, { Document } from 'mongoose';
 const Schema = mongoose.Schema;
+const global = require('../bin/global');
 
 const badgeclassSchema = new Schema(
   {
@@ -15,7 +16,6 @@ const badgeclassSchema = new Schema(
   },
   {
     //makes sure showing this object doesn't give the _id info
-    //TODO: correct obj type
     toJSON: {
       virtuals: true,
       transform: (doc: Document, obj: any) => {
@@ -28,10 +28,26 @@ const badgeclassSchema = new Schema(
 );
 
 //the url/id of a badgeclass is dependent of the _id and this is not predefined, so make it a virtual property
-//TODO: correct type for "this"
-badgeclassSchema.virtual('id').get(function (this: any) {
-  return '/badgeclass/' + this._id;
+badgeclassSchema.virtual('id').get(function (this: BadgeclassDocument) {
+  return global.SERVER_URL + '/badgeclass/' + this._id;
 });
 
+interface BadgeclassI {
+  '@context': string;
+  type: string;
+  name: string;
+  description: string;
+  image: string;
+  criteria: string;
+  issuer: string;
+  tag: string;
+  id: string;
+
+  toJSON(): any;
+}
+
+//custom type for Badgeclass Document
+export type BadgeclassDocument = BadgeclassI & Document;
+
 //Export model
-module.exports = mongoose.model('badgeclass', badgeclassSchema);
+export default mongoose.model('badgeclass', badgeclassSchema);

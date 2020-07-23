@@ -1,6 +1,6 @@
 export {};
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose, { Document, Schema } from 'mongoose';
+const global = require('../bin/global');
 
 const AssertionSchema = new Schema(
   {
@@ -20,7 +20,6 @@ const AssertionSchema = new Schema(
   },
   {
     //makes sure showing this object doesn't give the _id info
-    //TODO: correct obj type
     toJSON: {
       virtuals: true,
       transform: (doc: Document, obj: any) => {
@@ -32,10 +31,27 @@ const AssertionSchema = new Schema(
   }
 );
 
-//TODO: correct "this" type
-AssertionSchema.virtual('id').get(function (this: any) {
-  return '/assertion/' + this._id;
+//TODO: it might be better to put server url already here, in stead of adding it in the controllers
+AssertionSchema.virtual('id').get(function (this: AssertionDocument) {
+  return global.SERVER_URL + '/assertion/' + this._id;
 });
 
+interface AssertionI {
+  '@context': string;
+  recipient: any;
+  type: string;
+  badge: string;
+  issuedOn: string;
+  evidence: any;
+  verification: string;
+  accepted: boolean;
+  id: string;
+
+  toJSON(): any;
+}
+
+//custom type for Assertion Document
+export type AssertionDocument = AssertionI & Document;
+
 //Export model
-module.exports = mongoose.model('Assertion', AssertionSchema);
+export default mongoose.model('Assertion', AssertionSchema);
