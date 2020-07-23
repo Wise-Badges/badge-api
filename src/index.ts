@@ -5,7 +5,7 @@ dotenv.config();
 
 const createError = require('http-errors');
 const path = require('path');
-
+const global = require('./bin/global');
 const indexRouter = require('./routes/main');
 const badgeclassRouter = require('./routes/badgeclass');
 const assertionRouter = require('./routes/assertion');
