@@ -6,41 +6,9 @@ const async = require('async');
 const request = require('request');
 const bakery = require('openbadges-bakery-v2');
 const validator = require('express-validator');
-const paginate = require('express-paginate');
 
-//TODO: refactor?
 //response type here is 'any' and not Response as middleware added fields are giving errors when using Response
-exports.listAssertions = function (req: Request, res: any, next: NextFunction) {
-  const limit = parseInt(req.query.limit?.toString() || global.DEFAULT_PAGE_LIMIT);
-  const page = parseInt(req.query.page?.toString() || '1'); //default is first page
-  /*Assertion.find({})
-    .limit(limit)
-    .skip(page * limit - limit)
-    .exec(async function (err: Error, assertions: Array<AssertionDocument>) {
-      let list: any[] = [];
-      const itemCount = await Assertion.countDocuments({});
-      const pageCount = Math.ceil(itemCount / limit);
-      assertions.forEach((assertion) => {
-        if (!req.query.fields) {
-          list.push(assertion);
-        } else {
-          //split list of fields wanting to show in the result
-          const fields = req.query.fields.toString().split(',');
-          var filter = Object();
-          if (fields.includes('recipient')) filter.recipient = assertion.recipient;
-          if (fields.includes('@context')) filter.context = assertion['@context'];
-          if (fields.includes('type')) filter.type = assertion.type;
-          if (fields.includes('badge')) filter.badge = assertion.badge;
-          if (fields.includes('issuedOn')) filter.issuedOn = assertion.issuedOn;
-          if (fields.includes('evidence')) filter.evidence = assertion.evidence;
-          if (fields.includes('verification')) filter.verification = assertion.verification;
-          if (fields.includes('accepted')) filter.accepted = assertion.accepted;
-          if (fields.includes('id')) filter.id = assertion.id;
-          list.push(filter);
-        }
-      });
-      res.json({ assertions: list });
-    });*/
+exports.listAssertions = function (req: Request, res: any) {
   res.json(res.paginatedResults);
 };
 

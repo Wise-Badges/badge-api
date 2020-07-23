@@ -30,11 +30,15 @@ router.get('/issuer', (req: Request, res: Response): void => {
 // GET request for all badge classes
 router.get(
   '/badgeclasses',
-  global.paginatedResults(Badgeclass),
+  global.paginatedResults(Badgeclass, '/badgeclasses'),
   badgeclassController.listBadgeclasses
 );
 
 // GET request for all assertions
-router.get('/assertions', global.paginatedResults(Assertion), assertionController.listAssertions);
+router.get(
+  '/assertions',
+  global.paginatedResults(Assertion, '/assertions'),
+  assertionController.listAssertions
+);
 
 module.exports = router;
