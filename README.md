@@ -63,9 +63,10 @@ None
       [{ "value": "https://twitter/sender/sometweet123",
         "msg": "Reason should be a (valid) URL linking to a Twitter/Facebook/... post.",
         "param": "reason",
-        "location": "body"}, 
-        . . . ]
+        "location": "body"}
+        ]
       ```
+      * note: "valid" here means it should have valid URL syntax, there is no checking if the webpage actually exists
   OR
 
   * **Code:** 500 INTERNAL ERROR <br />
@@ -93,9 +94,7 @@ None
     {
       "badgeclasses":[
            {
-      "criteria":{
-          "narrative":"just testing"
-      },
+      "criteria":{ "narrative":"just testing"},
       "@context":"https://w3id.org/openbadges/v2",
       "type":"BadgeClass",
       "name":"example",
@@ -103,8 +102,7 @@ None
       "image":"http://wisebadges.wabyte.com/WiseBadges.png",
       "issuer":"http://localhost:5000/issuer",
       "id":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849"
-    },
-    . . .
+    }
       ]
     }
     ```
@@ -123,7 +121,21 @@ None
   `GET` 
   
 *  **URL Params:**
-None
+**optional**
+* fields: choose which fields you want to be shown in the results
+  possibilities: recipient, "@context", type, badge, issuedOn, evidence, verification, accepted, id
+  default: all fields will be shown
+  example: assertions/?fields=recipient,id,badge
+* page: show which page you want to see
+  default: 1
+  example: assertions/?page=5
+* limit: how many assertions you want to get on one page
+  default: 20
+  max: 50
+  example: assertions/?limit=30
+  
+  **Example combined**
+  `http://localhost:5000/assertions/?fields=id,badge&limit=25&page=3
 
 * **Data Params**
 None
@@ -132,13 +144,37 @@ None
   * **Code:** 200 <br />
     **Content:**
     ```json
-    {
-      "assertions": [
-         "http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8",
-         "http://localhost:5000/assertion/5f17fdac351bdc331d64c47b",
-      ]
-    }
+     {  
+      "object": "list",
+      "hasMore": true,
+      "pageCount": 10,
+      "itemCount": 190,
+      "pages": [
+      {
+        "number": 1,
+        "url": "/assertions/?fields=id%2Cbadge&page=1&limit=2"
+      },
+      {
+        "number": 2,
+        "url": "/assertions/?fields=id%2Cbadge&page=2&limit=2"
+      },
+      {
+        "number": 3,
+        "url": "/assertions/?fields=id%2Cbadge&page=3&limit=2"
+      }
+      ],
+      "data": [
+      {
+        "badge": "http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849",
+        "id": "http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"
+      },
+      {
+        "badge": "https://api.wisebadges.com/17qjf87j3kpz56",
+        "id": "http://localhost:5000/assertion/5f17fdac351bdc331d64c47b"
+        }]
     ```
+    
+    * note: pages will always show list of 3 pages, first element is previous, second is current, and third is next (except when on page 1!)
     
 * **Error Response:**
 
