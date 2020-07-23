@@ -5,7 +5,6 @@ dotenv.config();
 
 const createError = require('http-errors');
 const path = require('path');
-const paginate = require('express-paginate');
 const global = require('./bin/global');
 const indexRouter = require('./routes/main');
 const badgeclassRouter = require('./routes/badgeclass');
@@ -19,7 +18,6 @@ const app: Application = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(paginate.middleware(global.DEFAULT_PAGE_LIMIT, global.DEFAULT_PAGE_MAX));
 
 app.use('/', indexRouter);
 app.use('/badgeclass', badgeclassRouter);

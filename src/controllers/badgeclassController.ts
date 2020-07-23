@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Badgeclass, { BadgeclassDocument } from '../models/badgeclass';
 
-exports.listBadgeclasses = function (req: Request, res: Response) {
+exports.listBadgeclasses = function (req: Request, res: any) {
   Badgeclass.find({}).exec(function (err: Error, badgeclasses: Array<BadgeclassDocument>) {
     const list = badgeclasses.map((badgeclass) => badgeclass.toJSON());
-    res.json({ badgeclasses: list });
+    res.json(res.paginatedResults);
   });
 };
 

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 import Issuer, { IssuerDocument } from '../models/issuer';
+import Assertion from '../models/assertion';
+import Badgeclass from '../models/badgeclass';
 const global = require('../bin/global');
 const badgeclassController = require('../controllers/badgeclassController');
 const assertionController = require('../controllers/assertionController');
@@ -26,9 +28,13 @@ router.get('/issuer', (req: Request, res: Response): void => {
 });
 
 // GET request for all badge classes
-router.get('/badgeclasses', badgeclassController.listBadgeclasses);
+router.get(
+  '/badgeclasses',
+  global.paginatedResults(Badgeclass),
+  badgeclassController.listBadgeclasses
+);
 
 // GET request for all assertions
-router.get('/assertions', assertionController.listAssertions);
+router.get('/assertions', global.paginatedResults(Assertion), assertionController.listAssertions);
 
 module.exports = router;
