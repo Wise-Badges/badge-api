@@ -83,11 +83,37 @@ None
   `GET` 
   
 *  **URL Params:**
-None
 
-* **Data Params**
-None
+**Optional**
+* "fields": choose which fields you want to be shown in the results
+  
+  possibilities: type, "@context", name, description, criteria, image, issuer, tag, figure, id
+  
+  default: all fields will be shown
+  
+  example: assertions/?fields=description,id,criteria
+  
+* "page": show which page you want to see
 
+  default: 1
+  
+  example: badgeclasses/?page=5
+  
+* "limit": how many badgeclasses you want to get on one page
+
+  default: 20
+  
+  max: 50
+  
+  example: badgeclasses/?limit=30
+  
+  
+  **Example combined**
+  
+  `https://api.wisebadges.osoc.be/badgeclasses/?fields=id,name&limit=40&page=6`
+
+* **Data Params:**
+None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
@@ -129,23 +155,36 @@ None
   `GET` 
   
 *  **URL Params:**
-**optional**
-* fields: choose which fields you want to be shown in the results
+
+**Optional**
+* "fields": choose which fields you want to be shown in the results
+  
   possibilities: recipient, "@context", type, badge, issuedOn, evidence, verification, accepted, id
+  
   default: all fields will be shown
+  
   example: assertions/?fields=recipient,id,badge
-* page: show which page you want to see
+  
+* "page": show which page you want to see
+
   default: 1
+  
   example: assertions/?page=5
-* limit: how many assertions you want to get on one page
+  
+* "limit": how many assertions you want to get on one page
+
   default: 20
+  
   max: 50
+  
   example: assertions/?limit=30
   
+  
   **Example combined**
-  `https://api.wisebadges.osoc.be/assertions/?fields=id,badge&limit=25&page=3
+  
+  `https://api.wisebadges.osoc.be/assertions/?fields=id,badge&limit=25&page=3`
 
-* **Data Params**
+* **Data Params:**
 None
 
 * **Success Response:**
