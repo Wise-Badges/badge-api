@@ -105,7 +105,7 @@ exports.createAssertion = [
       if (err) return res.status(500).send();
       res.json({
         json: assertion.id,
-        html: `${global.FRONTEND_URL}/badge/${assertion._id}`
+        html: `${global.FRONTEND_URL}/detail/${assertion._id}`
       });
     });
   }

@@ -1,5 +1,5 @@
 export const SERVER_URL = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
-export const FRONTEND_URL = 'https://wisebadges.be';
+export const FRONTEND_URL = 'https://wisebadges.osoc.be';
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
 
