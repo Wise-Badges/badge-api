@@ -11,7 +11,7 @@ import { Request, Response } from 'express';
 // GET request for "home page": give links to all possibilities
 router.get('/', (req: Request, res: Response): void => {
   res.status(200).send({
-    ASSERTIONS: global.SERVER_URL + '/assertions',
+    assertions: global.SERVER_URL + '/assertions',
     badgeclasses: global.SERVER_URL + '/badgeclasses',
     issuer: global.SERVER_URL + '/issuer'
   });
