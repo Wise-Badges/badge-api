@@ -82,7 +82,7 @@ exports.createAssertion = [
       },
       type: 'Assertion',
       badge: req.body.badgeclass,
-      issuedOn: new Date().toISOString(),
+      issuedOn: new Date(),
       evidence: {
         id: req.body.reason,
         narrative:
