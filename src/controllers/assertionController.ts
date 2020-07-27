@@ -86,9 +86,9 @@ exports.createAssertion = [
       evidence: {
         id: req.body.reason,
         narrative:
-          'Issued with ' +
+          'Issued using ' +
           req.body.platform +
-          'by ' +
+          ' by ' +
           req.body.senderName +
           ' (' +
           req.body.sender +

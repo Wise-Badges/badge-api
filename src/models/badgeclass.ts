@@ -14,6 +14,7 @@ const badgeclassSchema = new Schema(
     issuer: { type: String, required: true },
     tag: { type: String, requiered: true }, //application specific field, not an open badges standard
     figure: { type: String, requiered: true } //application specific for front end reasons: see documentation
+    //TODO: figure should be frond-end logic, and should have no place in the API
   },
   {
     //makes sure showing this object doesn't give the _id info
