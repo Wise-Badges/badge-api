@@ -3,12 +3,15 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 const dotenv = require('dotenv');
 dotenv.config();
 
+const schedule = require('node-schedule');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
 const createError = require('http-errors');
 const indexRouter = require('./routes/main');
 const badgeclassRouter = require('./routes/badgeclass');
 const assertionRouter = require('./routes/assertion');
-const mongoose = require('mongoose');
-const cors = require('cors');
+const global = require('./bin/global');
 
 const PORT = process.env.PORT || 5000;
 const app: Application = express();
@@ -36,6 +39,11 @@ app.listen(PORT, () => console.log(`App is listening on port ${PORT}`));
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
+});
+
+//schedule task to check everyday at 00:00 if deletion of unaccepted assertions is needed
+let j = schedule.scheduleJob('0 0 * * *', function () {
+  global.removeAssertions();
 });
 
 // error handler

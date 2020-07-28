@@ -4,6 +4,7 @@ const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
 
 import { pick } from 'filter-anything';
+import Assertion, { AssertionDocument } from '../models/assertion';
 
 //TODO: refactor?
 export function paginatedResults(model: any, route: string, routeExtra: string = '') {
@@ -76,4 +77,21 @@ export function paginatedResults(model: any, route: string, routeExtra: string =
       res.status(500).json({ error: e.message });
     }
   };
+}
+
+export function removeAssertions() {
+  Assertion.find({ accepted: false }).exec(function (
+    err: Error,
+    assertions: Array<AssertionDocument>
+  ) {
+    assertions.forEach((assertion) => {
+      const timeDifference = new Date().getTime() - assertion.issuedOn.getTime();
+      const dayDifference = timeDifference / (1000 * 3600 * 24);
+      //TODO: >= 14 !!!
+      if (dayDifference >= 1) {
+        //delete assertion if after two weeks it still hasn't been accepted
+        Assertion.findByIdAndDelete(assertion._id).exec();
+      }
+    });
+  });
 }
