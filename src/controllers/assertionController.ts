@@ -149,7 +149,8 @@ exports.getDownloadableBadge = function (req: Request, res: Response) {
         badgeImage: any
       ) {
         if (err) return res.status(500).send(err);
-        if (badgeImage == null) {
+        //also check if buffer isn't empty
+        if (badgeImage == null || badgeImage.buffer.byteLength < 1) {
           return res.status(404).send({ error: 'No image found for this badgeclass.' });
         }
         bakery.bake(
@@ -180,7 +181,7 @@ function getBadgeImage(image: String, callback: CallableFunction) {
 
   request(options, function (err: Error, res: Response, body: any) {
     if (err) {
-      return res.status(500).send(err);
+      callback(err, null);
     } else {
       callback(null, body);
     }
