@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import Badgeclass, { BadgeclassDocument } from '../models/badgeclass';
+import Assertion, { AssertionDocument } from '../models/assertion';
+const global = require('../bin/global');
 
 //TODO: some day people should be able to make their own badgeclasses with a POST request
 
@@ -16,4 +18,8 @@ exports.showBadgeclassDetails = function (req: Request, res: Response) {
     }
     res.json(badgeclass.toJSON());
   });
+};
+
+exports.showBadgeclassAssertions = function (req: Request, res: any) {
+  res.json(res.paginatedResults);
 };
