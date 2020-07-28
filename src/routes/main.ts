@@ -8,6 +8,8 @@ const badgeclassController = require('../controllers/badgeclassController');
 const assertionController = require('../controllers/assertionController');
 import { Request, Response } from 'express';
 
+//TODO: strings like '/assertions' etc to global variables, as they are needed in other functions (like in global.ts) as well
+
 // GET request for "home page": give links to all possibilities
 router.get('/', (req: Request, res: Response): void => {
   res.status(200).send({

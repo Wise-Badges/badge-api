@@ -41,7 +41,7 @@ interface AssertionI {
   recipient: any;
   type: string;
   badge: string;
-  issuedOn: string;
+  issuedOn: Date;
   evidence: any;
   verification: string;
   accepted: boolean;
