@@ -9,6 +9,7 @@ export function paginatedResults(model: any, route: string) {
   return async (req: any, res: any, next: any) => {
     const page = parseInt(req.query.page || 1);
     let limit = parseInt(req.query.limit || DEFAULT_LIMIT);
+    const accepted = req.query.accepted;
 
     if (limit > MAX_LIMIT) limit = 50;
 
@@ -33,9 +34,14 @@ export function paginatedResults(model: any, route: string) {
       if (req.query.fields) results.previous += '&fields=' + req.query.fields;
     }
 
+    let findParameter = {};
+    if (accepted) {
+      findParameter = { accepted: accepted };
+    }
+
     try {
       let data = await model
-        .find()
+        .find(findParameter)
         .sort({ issuedOn: -1 }) //sort for assertions
         .sort({ name: 1 }) //sort for badgeclasses
         .limit(limit)
