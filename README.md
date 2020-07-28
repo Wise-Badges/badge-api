@@ -41,7 +41,7 @@ None
     "senderName": "Susanna",
     "platform": "twitter",
     "reason": "https://twitter.com/sometweet123",
-    "badgeclass": "https://api.wisebadges.be/17qjf87j3kpz56"
+    "badgeclass": "https://api.wisebadges.osoc.be/badgeclass/5f1ea43b77630a8b91a295c8"
   }
   ```
 
@@ -50,10 +50,11 @@ None
     **Content:** 
        ```json
       {
-        "json": "https://api.wisebadges.be/assertion/5f15ab65a546d6ce7861b12e",
-        "html": "https://wisebadges.be/badge/5f15ab65a546d6ce7861b12e"
+        "json": "https://api.wisebadges.osoc.be/assertion/5f15ab65a546d6ce7861b12e",
+        "html": "https://wisebadges.osoc.be/detail/5f15ab65a546d6ce7861b12e"
       }
       ```
+      * note: "html" is the link to the front end webpage, showing the download button etc., "json" links to the json of the assertion itself
  
 * **Error Response:**
 
@@ -63,16 +64,17 @@ None
       [{ "value": "https://twitter/sender/sometweet123",
         "msg": "Reason should be a (valid) URL linking to a Twitter/Facebook/... post.",
         "param": "reason",
-        "location": "body"}, 
-        . . . ]
+        "location": "body"}
+        ]
       ```
+      * note: "valid" here means it should have valid URL syntax, there is no checking if the webpage actually exists
   OR
 
   * **Code:** 500 INTERNAL ERROR <br />
 
 
 ## Get all badgeclasses
-  This will show a list of all possible badgeclasses.
+  This will show a list of all possible badgeclasses, paginated.
 
 * **URL:**
 /badgeclasses
@@ -81,33 +83,63 @@ None
   `GET` 
   
 *  **URL Params:**
-None
 
-* **Data Params**
-None
+**Optional**
+* "fields": choose which fields you want to be shown in the results
+  
+  possibilities: type, "@context", name, description, criteria, image, issuer, tag, figure, id
+  
+  default: all fields will be shown
+  
+  example: assertions/?fields=description,id,criteria
+  
+* "page": show which page you want to see
 
+  default: 1
+  
+  example: badgeclasses/?page=5
+  
+* "limit": how many badgeclasses you want to get on one page
+
+  default: 20
+  
+  max: 50
+  
+  example: badgeclasses/?limit=30
+  
+  
+  **Example combined**
+  
+  `https://api.wisebadges.osoc.be/badgeclasses/?fields=id,name&limit=40&page=6`
+
+* **Data Params:**
+None
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
     ```json
     {
-      "badgeclasses":[
-           {
-      "criteria":{
-          "narrative":"just testing"
-      },
-      "@context":"https://w3id.org/openbadges/v2",
-      "type":"BadgeClass",
-      "name":"example",
-      "description":"just a test badge",
-      "image":"http://wisebadges.wabyte.com/WiseBadges.png",
-      "issuer":"http://localhost:5000/issuer",
-      "id":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849"
-    },
-    . . .
-      ]
-    }
+        "current": "https://api.wisebadges.osoc.be/badgeclasses/?page=1&limit=20",
+        "totalPageCount": 1,
+        "limit": 20,
+        "data": [
+        {
+        "criteria": {
+        "narrative": "Explanation of why you should give this badge."
+        },
+        "@context": "https://w3id.org/openbadges/v2",
+        "type": "BadgeClass",
+        "name": "Example Badge",
+        "description": "Short description of the badge.",
+        "image": "https://api.wisebadges.osoc.be/images/example.png",
+        "issuer": "https://api.wisebadges.osoc.be/issuer",
+        "tag": "ExampleBadge",
+        "figure": "hexagon",
+        "id": "https://api.wisebadges.osoc.be/badgeclass/5f1ea43b77630a8b91a295c8"
+        }
+       ]
     ```
+    * note: if their are more pages: next and previous page links are also listed in the result (see example content in "get all assertions")
      
 * **Error Response:**
 
@@ -123,21 +155,71 @@ None
   `GET` 
   
 *  **URL Params:**
-None
 
-* **Data Params**
+**Optional**
+* "fields": choose which fields you want to be shown in the results
+  
+  possibilities: recipient, "@context", type, badge, issuedOn, evidence, verification, accepted, id
+  
+  default: all fields will be shown
+  
+  example: assertions/?fields=recipient,id,badge
+  
+* "page": show which page you want to see
+
+  default: 1
+  
+  example: assertions/?page=5
+  
+* "limit": how many assertions you want to get on one page
+
+  default: 20
+  
+  max: 50
+  
+  example: assertions/?limit=30
+  
+  
+  **Example combined**
+  
+  `https://api.wisebadges.osoc.be/assertions/?fields=id,badge&limit=25&page=3`
+
+* **Data Params:**
 None
 
 * **Success Response:**
   * **Code:** 200 <br />
     **Content:**
     ```json
-    {
-      "assertions": [
-         "http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8",
-         "http://localhost:5000/assertion/5f17fdac351bdc331d64c47b",
-      ]
-    }
+     {
+      "current": "https://api.wisebadges.osoc.be/assertions/?page=3&limit=20",
+      "totalPageCount": 11,
+      "limit": 20,
+      "previous": "https://api.wisebadges.osoc.be/assertions/?page=2&limit=20",
+      "next": "https://api.wisebadges.osoc.be/assertions/?page=4&limit=20",
+      "data": [
+      {
+        "recipient": {
+        "type": "url",
+        "hashed": false,
+        "identity": "https://twitter.com/WardBeyens",
+        "name": "Ward Beyens"
+        },
+        "evidence": {
+        "id": "https://twitter.com/WardExtra/status/1287720988390690817",
+        "narrative": "Issued with twitterby WardBeyensExtra (https://twitter.com/WardExtra)."
+        },
+        "accepted": false,
+        "@context": "https://w3id.org/openbadges/v2",
+        "type": "Assertion",
+        "badge": "https://api.wisebadges.osoc.be/badgeclass/5f1ea43b77630a8b91a295c8",
+        "issuedOn": "Mon Jul 27 2020 12:06:23 GMT+0000 (Coordinated Universal Time)",
+        "verification": {
+        "type": "hosted"
+        },
+        "id": "https://api.wisebadges.osoc.be/assertion/5f1ec33f90c8d21738df464a"
+      }
+     ]
     ```
     
 * **Error Response:**
@@ -145,7 +227,7 @@ None
   * **Code:** 500 INTERNAL ERROR <br />
 
 ## Get the issuer
-  This will show a list of all issued assertions.
+  This will show the json/details of the issuer.
 
 * **URL:**
 /issuer
@@ -164,13 +246,13 @@ None
     **Content:**
     ```json
     {
-      "@context":"https://w3id.org/openbadges/v2",
-      "type":"Issuer",
-      "id":"http://localhost:5000/issuer",
-      "name":"WISE Badges",
-      "url":"https://wisebadges.be",
-      "email":"wise@osoc.be",
-      "image":"http://wisebadges.wabyte.com/WiseBadges.png"
+    "@context": "https://w3id.org/openbadges/v2",
+    "type": "Issuer",
+    "id": "https://api.wisebadges.osoc.be/issuer",
+    "name": "WISE Badges",
+    "url": "https://wisebadges.osoc.be/",
+    "email": "wise@osoc.be",
+    "image": "https://api.wisebadges.osoc.be/images/wisebadges.png"
     }
     ```
     
@@ -199,18 +281,22 @@ None
     **Content:**
     ```json
     {
-      "criteria":{
-          "narrative":"just testing"
+      "criteria": {
+      "narrative": "Explanation of why you should give this badge."
       },
-      "@context":"https://w3id.org/openbadges/v2",
-      "type":"BadgeClass",
-      "name":"example",
-      "description":"just a test badge",
-      "image":"http://wisebadges.wabyte.com/WiseBadges.png",
-      "issuer":"http://localhost:5000/issuer",
-      "id":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849"
+      "@context": "https://w3id.org/openbadges/v2",
+      "type": "BadgeClass",
+      "name": "Example Badge",
+      "description": "Short description of the badge.",
+      "image": "https://api.wisebadges.osoc.be/images/example.png",
+      "issuer": "https://api.wisebadges.osoc.be/issuer",
+      "tag": "ExampleBadge",
+      "figure": "hexagon",
+      "id": "https://api.wisebadges.osoc.be/badgeclass/5f1ea43b77630a8b91a295c8"
     }
     ```
+    * note: "figure" is for front-end purposes (what shape the image has), this should eventually be moved to frond-end
+    
 * **Error Response:**
 
   * **Code:** 404 NOT FOUND <br />
@@ -240,28 +326,25 @@ None
     **Content:**
     ```json
     {
-      "recipient":{
-          "type":"url",
-          "hashed":false,
-          "identity":"https://twitter.com/Sarah_VanDenB",
-          "name":"@sarah_vandenb"
-      },
-      "sender":{
-          "identity":"https://twitter.com/fvspeybr",
-          "name":"@fvspeybr"
-      },
-      "evidence":{
-          "id":"https://twitter.com/fvspeybr/status/1283302666005811200"
-      },
-      "accepted":true,
-      "@context":"https://w3id.org/openbadges/v2",
-      "type":"Assertion",
-      "badge":"http://localhost:5000/badgeclass/5f0ebd0ba72c486d5a56d849",
-      "issuedOn":"2020-07-15T09:10:05+00:00",
-      "verification":{
-          "type":"hosted"
-      },
-      "id":"http://localhost:5000/assertion/5f0eea5ea37a3f29d3921aa8"
+    "recipient": {
+    "type": "url",
+    "hashed": false,
+    "identity": "https://twitter.com/WardBeyens",
+    "name": "Ward Beyens"
+    },
+    "evidence": {
+    "id": "https://twitter.com/WardExtra/status/1287720988390690817",
+    "narrative": "Issued using twitter by WardBeyensExtra (https://twitter.com/WardExtra)."
+    },
+    "accepted": false,
+    "@context": "https://w3id.org/openbadges/v2",
+    "type": "Assertion",
+    "badge": "https://api.wisebadges.osoc.be/badgeclass/5f1ea43b77630a8b91a295c8",
+    "issuedOn": "Mon Jul 27 2020 12:06:23 GMT+0000 (Coordinated Universal Time)",
+    "verification": {
+    "type": "hosted"
+    },
+    "id": "https://api.wisebadges.osoc.be/assertion/5f1ec33f90c8d21738df464a"
     }
     ```
 * **Error Response:**

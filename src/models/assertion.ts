@@ -13,7 +13,7 @@ const AssertionSchema = new Schema(
     },
     type: { type: String, required: true }, //"Assertion"
     badge: { type: String, required: true },
-    issuedOn: { type: String, required: true },
+    issuedOn: { type: Date, required: true },
     evidence: { id: { type: String, requiered: true }, narrative: { type: String } }, //link to post
     verification: { type: { String, requiered: true } },
     accepted: { type: Boolean, default: false }
@@ -25,6 +25,7 @@ const AssertionSchema = new Schema(
       transform: (doc: Document, obj: any) => {
         delete obj.__v;
         delete obj._id;
+        obj.issuedOn = obj.issuedOn.toISOString();
         return obj;
       }
     }

@@ -1,5 +1,5 @@
 export const SERVER_URL = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
-export const FRONTEND_URL = 'https://wisebadges.be';
+export const FRONTEND_URL = 'https://wisebadges.osoc.be';
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
 
@@ -34,7 +34,13 @@ export function paginatedResults(model: any, route: string) {
     }
 
     try {
-      let data = await model.find().limit(limit).skip(startIndex).exec();
+      let data = await model
+        .find()
+        .sort({ issuedOn: -1 }) //sort for assertions
+        .sort({ name: 1 }) //sort for badgeclasses
+        .limit(limit)
+        .skip(startIndex)
+        .exec();
       if (req.query.fields) {
         results.current += '&fields=' + req.query.fields; //add fields to current page link
         const filter = req.query.fields.toString().split(','); //make array for what fields to filter on

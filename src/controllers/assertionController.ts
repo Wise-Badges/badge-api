@@ -82,13 +82,13 @@ exports.createAssertion = [
       },
       type: 'Assertion',
       badge: req.body.badgeclass,
-      issuedOn: new Date().toString(),
+      issuedOn: new Date(),
       evidence: {
         id: req.body.reason,
         narrative:
-          'Issued with ' +
+          'Issued using ' +
           req.body.platform +
-          'by ' +
+          ' by ' +
           req.body.senderName +
           ' (' +
           req.body.sender +
@@ -105,7 +105,7 @@ exports.createAssertion = [
       if (err) return res.status(500).send();
       res.json({
         json: assertion.id,
-        html: `${global.FRONTEND_URL}/badge/${assertion._id}`
+        html: `${global.FRONTEND_URL}/detail/${assertion._id}`
       });
     });
   }
@@ -131,6 +131,7 @@ exports.deleteAssertion = function (req: Request, res: Response) {
 // TODO: needs refactor
 exports.getDownloadableBadge = function (req: Request, res: Response) {
   Assertion.findById(req.params.id).exec(function (err: Error, assertion: AssertionDocument) {
+    if (err) res.status(500).send(err);
     if (assertion == null) {
       return res.status(404).send({ error: 'Assertion ID not found.' });
     }
@@ -139,6 +140,7 @@ exports.getDownloadableBadge = function (req: Request, res: Response) {
       err: Error,
       badgeclass: BadgeclassDocument
     ) {
+      if (err) res.status(500).send(err);
       if (badgeclass == null) {
         return res.status(404).send({ error: 'No badgeclass found for this assertion.' });
       }
@@ -146,6 +148,7 @@ exports.getDownloadableBadge = function (req: Request, res: Response) {
         err: Error,
         badgeImage: any
       ) {
+        if (err) return res.status(500).send(err);
         if (badgeImage == null) {
           return res.status(404).send({ error: 'No image found for this badgeclass.' });
         }
@@ -155,8 +158,9 @@ exports.getDownloadableBadge = function (req: Request, res: Response) {
             assertion: assertion.toJSON()
           },
           function (err: Error, imageData: any) {
+            if (err) res.status(500).send(err);
             res.set('Content-Type', 'image/png');
-            res.set('Content-Disposition', 'attachment; filename=' + badgeclass.name + '.png');
+            res.set('Content-Disposition', 'attachment; filename=' + badgeclass.tag + '.png');
             res.set('Content-Length', imageData.length);
             res.end(imageData, 'binary');
             return;
@@ -174,9 +178,9 @@ function getBadgeImage(image: String, callback: CallableFunction) {
     encoding: null
   };
 
-  request(options, function (error: Error, response: Response, body: any) {
-    if (error) {
-      callback(null, null);
+  request(options, function (err: Error, res: Response, body: any) {
+    if (err) {
+      return res.status(500).send(err);
     } else {
       callback(null, body);
     }
