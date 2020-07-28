@@ -1,6 +1,10 @@
 
 # Documentation
 
+API url: https://api.wisebadges.osoc.be/
+
+front-end url: https://wisebadges.osoc.be/
+
 ## Create an assertion
   Given some parameters, this method will create an Assertion (https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Assertion) and return the json formatted assertion and the front-end html version.
 
@@ -29,7 +33,7 @@ None
    
    "reason": url to the post that references someone sending a badge
    
-   "badgeclass": url of the badgeclass
+   "badgeclass": url of the badgeclass (this can be ANY badgeclass, also ones not belonging to this API!)
    
    **Example body**
    
@@ -46,7 +50,7 @@ None
   ```
 
 * **Success Response:**
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304<br />
     **Content:** 
        ```json
       {
@@ -74,7 +78,7 @@ None
 
 
 ## Get all badgeclasses
-  This will show a list of all possible badgeclasses, paginated.
+  This will show a list of all possible badgeclasses, paginated and sorted on name (alphabetically).
 
 * **URL:**
 /badgeclasses
@@ -115,12 +119,13 @@ None
 * **Data Params:**
 None
 * **Success Response:**
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304<br />
     **Content:**
     ```json
     {
         "current": "https://api.wisebadges.osoc.be/badgeclasses/?page=1&limit=20",
         "totalPageCount": 1,
+        "totalItemCount": 1,
         "limit": 20,
         "data": [
         {
@@ -146,7 +151,7 @@ None
   * **Code:** 500 INTERNAL ERROR <br />
   
 ## Get all assertions
-  This will show a list of all issued assertions.
+  This will show a list of all issued assertions, there are many ways to modify this request: for example only seeing the assertions that have been accepted. The results are sorted on "issuedOn", so the date of issuing (newest first).
 
 * **URL:**
 /assertions
@@ -165,6 +170,14 @@ None
   
   example: assertions/?fields=recipient,id,badge
   
+* "accepted": filter out assertions that are accepted or those that are still unaccepted
+  
+  possibilities: true, false
+  
+  default: all assertions
+  
+  example: assertions/?accepted=true
+  
 * "page": show which page you want to see
 
   default: 1
@@ -182,18 +195,19 @@ None
   
   **Example combined**
   
-  `https://api.wisebadges.osoc.be/assertions/?fields=id,badge&limit=25&page=3`
+  `https://api.wisebadges.osoc.be/assertions/?fields=id,badge&limit=25&page=3&accepted=true`
 
 * **Data Params:**
 None
 
 * **Success Response:**
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304<br />
     **Content:**
     ```json
      {
       "current": "https://api.wisebadges.osoc.be/assertions/?page=3&limit=20",
       "totalPageCount": 11,
+      "totalItemCount": 219,
       "limit": 20,
       "previous": "https://api.wisebadges.osoc.be/assertions/?page=2&limit=20",
       "next": "https://api.wisebadges.osoc.be/assertions/?page=4&limit=20",
@@ -226,6 +240,64 @@ None
 
   * **Code:** 500 INTERNAL ERROR <br />
 
+## Get all assertions from a badgeclass
+  This will show a list of all issued assertions from a given badgeclass.The results are sorted on "issuedOn", so the date of issuing (newest first).
+
+* **URL:**
+/badgeclass/:id/assertions
+
+* **Method:**
+  `GET` 
+  
+*  **URL Params:**
+
+**Optional**
+* "fields": choose which fields you want to be shown in the results
+  
+  possibilities: recipient, "@context", type, badge, issuedOn, evidence, verification, accepted, id
+  
+  default: all fields will be shown
+  
+  example: assertions/?fields=recipient,id,badge
+  
+* "accepted": filter out assertions that are accepted or those that are still unaccepted
+  
+  possibilities: true, false
+  
+  default: all assertions
+  
+  example: assertions/?accepted=true
+  
+* "page": show which page you want to see
+
+  default: 1
+  
+  example: assertions/?page=5
+  
+* "limit": how many assertions you want to get on one page
+
+  default: 20
+  
+  max: 50
+  
+  example: assertions/?limit=30
+  
+  **Example combined**
+  
+  `https://api.wisebadges.osoc.be/badgeclass/5f1ea43b77630a8b91a295c8/assertions/?fields=id,badge&limit=25&page=3&accepted=true`
+
+* **Data Params:**
+None
+
+* **Success Response:**
+  * **Code:** 200 / 304<br />
+    **Content:** Same as "Get all assertions"
+    
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL ERROR <br />
+
+
 ## Get the issuer
   This will show the json/details of the issuer.
 
@@ -242,7 +314,7 @@ None
 None
 
 * **Success Response:**
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304 <br />
     **Content:**
     ```json
     {
@@ -277,7 +349,7 @@ id: id of the badgeclass
 None
 
 * **Success Response:**
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304<br />
     **Content:**
     ```json
     {
@@ -322,7 +394,7 @@ id: id of the assertion
 None
 
 * **Success Response:**
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304<br />
     **Content:**
     ```json
     {
@@ -372,7 +444,7 @@ id: id of the assertion
 None
 
 * **Success Response:**
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304 <br />
     **Content:** file download
     
 * **Error Response:**
@@ -406,7 +478,7 @@ None
 
 * **Success Response:**
 
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304 <br />
   
 * **Error Response:**
 
@@ -430,7 +502,7 @@ None
 
 * **Success Response:**
 
-  * **Code:** 200 <br />
+  * **Code:** 200 / 304 <br />
   
 * **Error Response:**
 
