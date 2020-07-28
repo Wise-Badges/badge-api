@@ -5,37 +5,59 @@ const MAX_LIMIT = 50;
 
 import { pick } from 'filter-anything';
 
-export function paginatedResults(model: any, route: string) {
+//TODO: refactor?
+export function paginatedResults(model: any, route: string, routeExtra: string = '') {
   return async (req: any, res: any, next: any) => {
-    const page = parseInt(req.query.page || 1);
-    let limit = parseInt(req.query.limit || DEFAULT_LIMIT);
-
-    if (limit > MAX_LIMIT) limit = 50;
-
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    const results = Object();
-
-    results.current = SERVER_URL + route + '/?page=' + page + '&limit=' + limit;
-
-    const itemcount = await model.countDocuments().exec();
-    results.totalPageCount = Math.ceil(itemcount / limit);
-    results.limit = limit;
-
-    if (endIndex < itemcount) {
-      results.next = SERVER_URL + route + '/?page=' + (page + 1) + '&limit=' + limit;
-      if (req.query.fields) results.next += '&fields=' + req.query.fields;
-    }
-
-    if (startIndex > 0) {
-      results.previous = SERVER_URL + route + '/?page=' + (page - 1) + '&limit=' + limit;
-      if (req.query.fields) results.previous += '&fields=' + req.query.fields;
-    }
-
     try {
+      const page = parseInt(req.query.page || 1);
+      let limit = parseInt(req.query.limit || DEFAULT_LIMIT);
+      const accepted = req.query.accepted;
+      let actualRoute = route;
+      let findParameter = Object();
+      let acceptedString = '';
+
+      //check if this is special route
+      if (routeExtra !== '') {
+        actualRoute = route + '/' + req.params.id + routeExtra;
+        findParameter.badge = SERVER_URL + '/badgeclass/' + req.params.id;
+      }
+
+      //limit can't be higher than 50
+      if (limit > MAX_LIMIT) limit = 50;
+
+      //if client only wants to see the accepted/unaccepted assertions (not a valid option for /badgeclasses)
+      if (accepted && route != '/badgeclasses') {
+        findParameter.accepted = accepted;
+        acceptedString = '&accepted=' + accepted;
+      }
+
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+
+      const results = Object();
+
+      results.current =
+        SERVER_URL + actualRoute + '/?page=' + page + '&limit=' + limit + acceptedString;
+
+      const itemcount = await model.find(findParameter).countDocuments().exec();
+      results.totalPageCount = Math.ceil(itemcount / limit);
+      results.totalItemCount = itemcount;
+      results.limit = limit;
+
+      if (endIndex < itemcount) {
+        results.next =
+          SERVER_URL + actualRoute + '/?page=' + (page + 1) + '&limit=' + limit + acceptedString;
+        if (req.query.fields) results.next += '&fields=' + req.query.fields;
+      }
+
+      if (startIndex > 0) {
+        results.previous =
+          SERVER_URL + actualRoute + '/?page=' + (page - 1) + '&limit=' + limit + acceptedString;
+        if (req.query.fields) results.previous += '&fields=' + req.query.fields;
+      }
+
       let data = await model
-        .find()
+        .find(findParameter)
         .sort({ issuedOn: -1 }) //sort for assertions
         .sort({ name: 1 }) //sort for badgeclasses
         .limit(limit)
