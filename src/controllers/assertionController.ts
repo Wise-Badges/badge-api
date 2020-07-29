@@ -129,7 +129,8 @@ exports.deleteAssertion = function (req: Request, res: Response) {
 };
 
 exports.addAnswerToAssertion = function (req: Request, res: Response) {
-  console.log(req.body.answer);
+  if (!req.body.answer && req.body.answer !== '')
+    return res.status(400).send({ error: 'No answer field specified.' });
   Assertion.findByIdAndUpdate(req.params.id, { $set: { answer: req.body.answer } }, { new: false })
     .then(() => {
       res.status(200).send();
