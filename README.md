@@ -1,3 +1,6 @@
+# Badge API 
+
+The Badge API is built with express, node and typescript. It allows clients to make, accept and delete assertions in the context of Open Badges (https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html). It also allows the client to get data from badgeclasses, assertions and the issuer (in this API, the issuer is WiseBadges), as well as get all assertions from a certain badge class. The API also makes it possible to get a download link for a verifiable Open Badge from an assertion.
 
 # Documentation
 
