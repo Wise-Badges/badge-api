@@ -80,6 +80,52 @@ None
   * **Code:** 500 INTERNAL ERROR <br />
 
 
+## Add answer to assertion
+  Given some parameters, this method will create an Assertion (https://www.imsglobal.org/sites/default/files/Badges/OBv2p0Final/index.html#Assertion) and return the json formatted assertion and the front-end html version.
+
+* **URL:**
+/assertion/:id/answer
+
+* **Method:**
+  `PATCH` 
+  
+*  **URL Params:**
+None
+
+* **Data Params**
+
+  **Required**
+  
+   "answer": After posting on a WiseBadge platform, the link of this post could be given here. (This could also be any URL/content you might need in the future)
+   
+   **Example body**
+   
+   ```json
+  {
+    "answer": "https://twitter.com/WiseBadges/status/1288390856592982016",
+  }
+  ```
+
+* **Success Response:**
+  * **Code:** 200 <br />
+ 
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:**
+      ```json
+      [{ "value": "",
+        "msg": "Answer should not be empty",
+        "param": "reason",
+        "location": "body"}
+        ]
+      ```
+      * note: Here we give you the freedom to add any field as long as it's not empty
+  OR
+
+  * **Code:** 500 INTERNAL ERROR <br />
+
+
 ## Get all badgeclasses
   This will show a list of all possible badgeclasses, paginated and sorted on name (alphabetically).
 
@@ -234,7 +280,8 @@ None
         "verification": {
         "type": "hosted"
         },
-        "id": "https://api.wisebadges.osoc.be/assertion/5f1ec33f90c8d21738df464a"
+        "id": "https://api.wisebadges.osoc.be/assertion/5f1ec33f90c8d21738df464a",
+        "answer" : "https://twitter.com/WiseBadges/status/1288390856592982016"
       }
      ]
     ```
