@@ -87,7 +87,7 @@ export function removeAssertions() {
     assertions.forEach((assertion) => {
       const timeDifference = new Date().getTime() - assertion.issuedOn.getTime();
       const dayDifference = timeDifference / (1000 * 3600 * 24);
-      if (dayDifference >= 14) {
+      if (dayDifference > 14) {
         //delete assertion if after two weeks it still hasn't been accepted
         Assertion.findByIdAndDelete(assertion._id).exec();
       }
