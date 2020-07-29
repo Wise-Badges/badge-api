@@ -128,6 +128,17 @@ exports.deleteAssertion = function (req: Request, res: Response) {
   });
 };
 
+exports.addAnswerToAssertion = function (req: Request, res: Response) {
+  console.log(req.body.answer);
+  Assertion.findByIdAndUpdate(req.params.id, { $set: { answer: req.body.answer } }, { new: false })
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch(() => {
+      res.status(500).send();
+    });
+};
+
 // TODO: needs refactor
 exports.getDownloadableBadge = function (req: Request, res: Response) {
   Assertion.findById(req.params.id).exec(function (err: Error, assertion: AssertionDocument) {

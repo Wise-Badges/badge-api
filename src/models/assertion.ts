@@ -16,7 +16,8 @@ const AssertionSchema = new Schema(
     issuedOn: { type: Date, required: true },
     evidence: { id: { type: String, requiered: true }, narrative: { type: String } }, //link to post
     verification: { type: { String, requiered: true } },
-    accepted: { type: Boolean, default: false }
+    accepted: { type: Boolean, default: false },
+    answer: { type: String }
   },
   {
     //makes sure showing this object doesn't give the _id info
