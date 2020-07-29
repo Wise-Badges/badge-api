@@ -283,6 +283,7 @@ None
       }
      ]
     ```
+    * note: default of "answer" is an empty string ("")
     
 * **Error Response:**
 
@@ -464,9 +465,12 @@ None
     "verification": {
     "type": "hosted"
     },
-    "id": "https://api.wisebadges.osoc.be/assertion/5f1ec33f90c8d21738df464a"
+    "id": "https://api.wisebadges.osoc.be/assertion/5f1ec33f90c8d21738df464a",
+     "answer" : "https://twitter.com/WiseBadges/status/1288390856592982016"
     }
     ```
+    * note: default of "answer" is an empty string ("")
+    
 * **Error Response:**
 
   * **Code:** 404 NOT FOUND <br />
