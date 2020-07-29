@@ -114,13 +114,9 @@ None
   * **Code:** 400 BAD REQUEST <br />
     **Content:**
       ```json
-      [{ "value": "",
-        "msg": "Answer should not be empty",
-        "param": "reason",
-        "location": "body"}
-        ]
+       { error: 'No answer field specified.' }
       ```
-      * note: Here we give you the freedom to add any field as long as it's not empty
+      * note: Here we give you the freedom to add any string, even an empty one
   OR
 
   * **Code:** 500 INTERNAL ERROR <br />
